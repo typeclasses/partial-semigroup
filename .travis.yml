@@ -1,0 +1,17 @@
+language: nix
+
+env:
+  - LC_ALL=en_US.UTF-8
+
+cache:
+  directories:
+    - $HOME/.stack
+
+before_install:
+  - nix-env -i stack
+
+script:
+  - stack --nix --no-terminal test
+
+notifications:
+  email: false
