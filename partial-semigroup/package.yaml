@@ -46,5 +46,5 @@ tests:
       - -threaded
     dependencies:
       - hedgehog >= 0.5 && < 0.6
-      - partial-semigroup      == 0.0.0.1
-      - partial-semigroup-test == 0.0.0.1
+      - partial-semigroup
+      - partial-semigroup-test

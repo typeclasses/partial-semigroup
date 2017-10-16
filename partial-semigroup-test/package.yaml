@@ -29,4 +29,4 @@ library:
 dependencies:
   - base >= 4.9 && < 4.10
   - hedgehog >= 0.5 && < 0.6
-  - partial-semigroup == 0.0.0.1
+  - partial-semigroup
