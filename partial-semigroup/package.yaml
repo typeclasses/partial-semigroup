@@ -1,14 +1,16 @@
-name: foo
+name: partial-semigroup
 version: 0.0.0.1
-github: chris-martin/foo
+github: chris-martin/partial-semigroup
 
 synopsis: |
-  ...
+  A partial binary associative operator.
 
 description: |
-  ...
+  A partial semigroup is like a semigroup, but the
+  operator is partial. We represent this in Haskell
+  as a total function @appendMaybe :: a -> a -> Maybe a@.
 
-category: ...
+category: Algebra
 
 author:     Chris Martin <ch.martin@gmail.com>
 maintainer: Chris Martin <ch.martin@gmail.com>
@@ -22,7 +24,7 @@ ghc-options:
 library:
   source-dirs: src
   exposed-modules:
-    - Foo
+    - Data.PartialSemigroup
 
 dependencies:
   - base
@@ -35,14 +37,4 @@ tests:
     ghc-options:
       - -threaded
     dependencies:
-      - foo
       - doctest
-
-  hedgehog:
-    source-dirs: test
-    main: hedgehog.hs
-    ghc-options:
-      - -threaded
-    dependencies:
-      - foo
-      - hedgehog

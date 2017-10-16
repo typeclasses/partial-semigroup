@@ -1,3 +1,3 @@
-# foo
+# partial-semigroup
 
-[![](https://travis-ci.org/chris-martin/[...].svg)](https://travis-ci.org/chris-martin/[...])
+[![](https://travis-ci.org/chris-martin/partial-semigroup.svg)](https://travis-ci.org/chris-martin/partial-semigroup)
