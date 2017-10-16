@@ -55,8 +55,25 @@ For comparison:
 
 === The associative law for partial semigroups
 
-For all @x@, @y@, @z@ such that @appendMaybe x y = Just xy@ and
-@appendMaybe y z = Just yx@, @appendMaybe x yz = appendMaybe xy z@.
+For all @x@, @y@, @z@:
+
+  * If @appendMaybe x y = Just xy@ and @appendMaybe y z = Just yz@, then
+
+      * @appendMaybe x yz = appendMaybe xy z@.
+
+This is a natural adaptation of the semigroup associativity axiom
+(@x <> (y <> z) = (x <> y) <> z@) to accommodate situations where @<>@ is
+undefined. We can rephrase the partial semigroup associativity in terms of a
+partial @<>@ operator thusly:
+
+For all @x@, @y@, @z@:
+
+  * If @x <> y@ and @y <> z@ are both defined, then
+
+      * @x <> (y <> z)@ is defined if and only if @(x <> y) <> z@ is defined,
+        and
+
+      * if these things /are/ all defined, then @x <> (y <> z) = (x <> y) <> z@.
 
 -}
 
