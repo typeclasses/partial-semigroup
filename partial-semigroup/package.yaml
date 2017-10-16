@@ -27,7 +27,7 @@ library:
     - Data.PartialSemigroup
 
 dependencies:
-  - base
+  - base >= 4.9 && < 4.10
 
 tests:
 
@@ -37,7 +37,7 @@ tests:
     ghc-options:
       - -threaded
     dependencies:
-      - doctest
+      - doctest >= 0.11 && < 0.14
 
   hedgehog:
     source-dirs: test
@@ -45,6 +45,6 @@ tests:
     ghc-options:
       - -threaded
     dependencies:
-      - hedgehog
-      - partial-semigroup
-      - partial-semigroup-test
+      - hedgehog >= 0.5 && < 0.6
+      - partial-semigroup      == 0.0.0.1
+      - partial-semigroup-test == 0.0.0.1
