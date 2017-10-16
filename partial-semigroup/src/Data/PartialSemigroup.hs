@@ -1,6 +1,6 @@
-{-# LANGUAGE LambdaCase          #-}
-{-# LANGUAGE NoImplicitPrelude   #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE LambdaCase                 #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
 
 module Data.PartialSemigroup
   (
@@ -26,20 +26,18 @@ module Data.PartialSemigroup
 
   -- * Total semigroups
   -- $total
-  , TotalSemigroup (..)
+  , Total (..)
+
+  -- * Error-propagating maybe
+  , Partial (..)
 
   ) where
 
 import Control.Applicative   (ZipList (..), (<*>))
-import Control.Monad         ((>>=))
-import Data.Either           (Either (..))
-import Data.Function         ((.))
-import Data.Functor          ((<$>))
 import Data.Functor.Identity (Identity (..))
 import Data.List.NonEmpty    (NonEmpty (..), nonEmpty)
-import Data.Maybe            (Maybe (..))
+import Data.Monoid           (Product (..), Sum (..))
 import Data.Semigroup        (Semigroup (..))
-import Text.Show             (Show)
 
 -- $setup
 --
@@ -55,6 +53,11 @@ For comparison:
 > (<>)        :: Semigroup a        => a -> a -> a
 > appendMaybe :: PartialSemigroup a => a -> a -> Maybe a
 
+=== The associative law for partial semigroups
+
+For all @x@, @y@, @z@ such that @appendMaybe x y = Just xy@ and
+@appendMaybe y z = Just yx@, @appendMaybe x yz = appendMaybe xy z@.
+
 -}
 
 class PartialSemigroup a
@@ -65,11 +68,22 @@ class PartialSemigroup a
 
 instance PartialSemigroup () where appendMaybe () () = Just ()
 
+--------------------------------------------------------------------------------
+
 instance PartialSemigroup a => PartialSemigroup (Identity a)
   where
     appendMaybe (Identity x) (Identity y) = Identity <$> appendMaybe x y
 
-instance PartialSemigroup [a] where appendMaybe x y = Just (x <> y)
+--------------------------------------------------------------------------------
+
+instance PartialSemigroup [a] where
+  appendMaybe x y = Just (x <> y)
+
+instance Num a => PartialSemigroup (Sum a) where
+  appendMaybe x y = Just (x <> y)
+
+instance Num a => PartialSemigroup (Product a) where
+  appendMaybe x y = Just (x <> y)
 
 --------------------------------------------------------------------------------
 
@@ -266,6 +280,25 @@ instance PartialSemigroup a => PartialSemigroup (ZipList a)
 
 --------------------------------------------------------------------------------
 
+{- | A wrapper for 'Maybe' with an error-propagating 'Semigroup'. -}
+
+newtype Partial a = Partial { unPartial :: Maybe a }
+  deriving (Eq, Ord, Read, Show)
+
+instance PartialSemigroup a => Semigroup (Partial a)
+  where
+    Partial (Just x) <> Partial (Just y) = Partial (appendMaybe x y)
+    _ <> _ = Partial Nothing
+
+instance Monoid a => Monoid (Partial a)
+  where
+    mappend (Partial (Just x)) (Partial (Just y)) = Partial (Just (mappend x y))
+    mappend _ _ = Partial Nothing
+
+    mempty = Partial (Just mempty)
+
+--------------------------------------------------------------------------------
+
 {- $total
 
 Every type with a 'Semigroup' can be given a trivial 'PartialSemigroup' instance
@@ -276,7 +309,7 @@ defined as:
 @
 
 Additionally, any type with a 'Semigroup' can be treated as a 'PartialSemigroup'
-by lifting it into 'TotalSemigroup'.
+by lifting it into 'Total'.
 
 -}
 
@@ -287,22 +320,22 @@ by lifting it into 'TotalSemigroup'.
 -- | ==== Examples
 
 -- |
--- >>> appendMaybe (TotalSemigroup "ab") (TotalSemigroup "cd")
--- Just (TotalSemigroup {unTotalSemigroup = "abcd"})
+-- >>> appendMaybe (Total "ab") (Total "cd")
+-- Just (Total {unTotal = "abcd"})
 
 -- |
--- >>> f = getProduct . unTotalSemigroup
--- >>> g = TotalSemigroup . Product
+-- >>> f = getProduct . unTotal
+-- >>> g = Total . Product
 -- >>> fmap f . partialConcat . fmap g $ [1..4]
 -- Just 24
 
-newtype TotalSemigroup a = TotalSemigroup { unTotalSemigroup :: a }
-  deriving Show
+newtype Total a = Total { unTotal :: a }
+  deriving (Eq, Ord, Read, Show)
 
-instance Semigroup a => PartialSemigroup (TotalSemigroup a)
+instance Semigroup a => PartialSemigroup (Total a)
   where
-    appendMaybe (TotalSemigroup x) (TotalSemigroup y) =
-      Just (TotalSemigroup (x <> y))
+    appendMaybe (Total x) (Total y) =
+      Just (Total (x <> y))
 
 --------------------------------------------------------------------------------
 
@@ -329,7 +362,7 @@ only over 'Left' values. -}
 -- [Left "ab",Right "c",Right "d",Left "ef"]
 
 newtype AppendLeft a b = AppendLeft { unAppendLeft :: Either a b }
-  deriving Show
+  deriving (Eq, Ord, Read, Show)
 
 instance PartialSemigroup a => PartialSemigroup (AppendLeft a b)
   where
@@ -362,7 +395,7 @@ only over 'Right' values. -}
 -- [Left "a",Left "b",Right "cd",Left "e",Left "f"]
 
 newtype AppendRight a b = AppendRight { unAppendRight :: Either a b }
-  deriving Show
+  deriving (Eq, Ord, Read, Show)
 
 instance PartialSemigroup b => PartialSemigroup (AppendRight a b)
   where

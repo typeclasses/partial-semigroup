@@ -38,3 +38,13 @@ tests:
       - -threaded
     dependencies:
       - doctest
+
+  hedgehog:
+    source-dirs: test
+    main: hedgehog.hs
+    ghc-options:
+      - -threaded
+    dependencies:
+      - hedgehog
+      - partial-semigroup
+      - partial-semigroup-test
