@@ -3,7 +3,7 @@ version: 0.0.0.1
 github: chris-martin/partial-semigroup
 
 synopsis: |
-  A partial binary associative operator.
+  A partial binary associative operator
 
 description: |
   A partial semigroup is like a semigroup, but the
