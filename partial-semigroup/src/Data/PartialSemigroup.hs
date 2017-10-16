@@ -1,6 +1,5 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE LambdaCase                 #-}
-{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE LambdaCase          #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Data.PartialSemigroup
   (
@@ -24,11 +23,12 @@ module Data.PartialSemigroup
   , partialZip
   , partialZip1
 
-  -- * Total semigroups
+  -- * Total to partial
   -- $total
   , Total (..)
 
-  -- * Error-propagating maybe
+  -- * Partial to total
+  -- $partial
   , Partial (..)
 
   ) where
@@ -45,71 +45,84 @@ import Data.Semigroup        (Semigroup (..))
 -- >>> import Data.Monoid
 -- >>> import Prelude
 
-{- | A partial semigroup is like a 'Semigroup', but with an operator returning
+-- The same fixity as <>
+infixr 6 <>?
+
+{- | A 'PartialSemigroup' is like a 'Semigroup', but with an operator returning
 @'Maybe' a@ rather than @a@.
 
 For comparison:
 
-> (<>)        :: Semigroup a        => a -> a -> a
-> appendMaybe :: PartialSemigroup a => a -> a -> Maybe a
+@
+('<>')  :: 'Semigroup' a        => a -> a -> a
+('<>?') :: 'PartialSemigroup' a => a -> a -> 'Maybe' a
+@
 
-=== The associative law for partial semigroups
-
-For all @x@, @y@, @z@:
-
-  * If @appendMaybe x y = Just xy@ and @appendMaybe y z = Just yz@, then
-
-      * @appendMaybe x yz = appendMaybe xy z@.
-
-This is a natural adaptation of the semigroup associativity axiom
-(@x <> (y <> z) = (x <> y) <> z@) to accommodate situations where @<>@ is
-undefined. We can rephrase the partial semigroup associativity in terms of a
-partial @<>@ operator thusly:
+=== The associativity axiom for partial semigroups
 
 For all @x@, @y@, @z@:
 
-  * If @x <> y@ and @y <> z@ are both defined, then
+  * If @x '<>?' y = 'Just' xy@ and @y '<>?' z = 'Just' yz@, then
 
-      * @x <> (y <> z)@ is defined if and only if @(x <> y) <> z@ is defined,
-        and
+      * @x '<>?' yz = xy '<>?' z@.
 
-      * if these things /are/ all defined, then @x <> (y <> z) = (x <> y) <> z@.
+==== Relationship to the semigroup associativity axiom
+
+The partial semigroup associativity axiom is a natural adaptation of the
+semigroup associativity axiom
+
+@x '<>' (y '<>' z) = (x '<>' y) '<>' z@
+
+with a slight modification to accommodate situations where '<>' is undefined. We
+may gain some insight into the connection between 'Semigroup' and
+'PartialSemigroup' by rephrasing the partial semigroup associativity in terms of
+a partial '<>' operator thusly:
+
+For all @x@, @y@, @z@:
+
+  * If @x '<>' y@ and @y '<>' z@ are both defined, then
+
+      * @x '<>' (y '<>' z)@ is defined if and only if @(x '<>' y) '<>' z@ is
+        defined, and
+
+      * if these things /are/ all defined, then the axiom for total semigroups
+        @x '<>' (y '<>' z) = (x '<>' y) '<>' z@ must hold.
 
 -}
 
 class PartialSemigroup a
   where
-    appendMaybe :: a -> a -> Maybe a
+    (<>?) :: a -> a -> Maybe a
 
 --------------------------------------------------------------------------------
 
-instance PartialSemigroup () where appendMaybe () () = Just ()
+instance PartialSemigroup () where () <>? () = Just ()
 
 --------------------------------------------------------------------------------
 
 instance PartialSemigroup a => PartialSemigroup (Identity a)
   where
-    appendMaybe (Identity x) (Identity y) = Identity <$> appendMaybe x y
+    Identity x <>? Identity y = Identity <$> (x <>? y)
 
 --------------------------------------------------------------------------------
 
 instance PartialSemigroup [a] where
-  appendMaybe x y = Just (x <> y)
+  x <>? y = Just (x <> y)
 
 instance Num a => PartialSemigroup (Sum a) where
-  appendMaybe x y = Just (x <> y)
+  x <>? y = Just (x <> y)
 
 instance Num a => PartialSemigroup (Product a) where
-  appendMaybe x y = Just (x <> y)
+  x <>? y = Just (x <> y)
 
 --------------------------------------------------------------------------------
 
 instance (PartialSemigroup a, PartialSemigroup b) =>
   PartialSemigroup (Either a b)
   where
-    appendMaybe (Left x) (Left y) = Left <$> appendMaybe x y
-    appendMaybe (Right x) (Right y) = Right <$> appendMaybe x y
-    appendMaybe _ _ = Nothing
+    Left  x <>? Left  y = Left  <$> (x <>? y)
+    Right x <>? Right y = Right <$> (x <>? y)
+    _       <>? _       = Nothing
 
 {- $either
 
@@ -117,10 +130,10 @@ The exemplary nontrivial 'PartialSemigroup' is 'Either', for which the append
 operator produces a 'Just' result only if both arguments are 'Left' or both
 arguments are 'Right'.
 
->>> appendMaybe (Left "ab") (Left "cd")
+>>> Left "ab" <>? Left "cd"
 Just (Left "abcd")
 
->>> appendMaybe (Left "ab") (Right [1,2])
+>>> Left "ab" <>? Right [1, 2]
 Nothing
 
 -}
@@ -135,27 +148,27 @@ fields' append operators must return 'Just' values.
 
 >>> x = (Left "ab", Right "hi")
 >>> y = (Left "cd", Right "jk")
->>> appendMaybe x y
+>>> x <>? y
 Just (Left "abcd",Right "hijk")
 
 >>> x = (Left "ab", Right "hi")
 >>> y = (Left "cd", Left "jk")
->>> appendMaybe x y
+>>> x <>? y
 Nothing
 
 -}
 
-instance (PartialSemigroup a, PartialSemigroup b) =>
-  PartialSemigroup (a, b)
+instance (PartialSemigroup a, PartialSemigroup b) => PartialSemigroup (a, b)
   where
-    appendMaybe (a, b) (a', b') =
-      (,) <$> appendMaybe a a' <*> appendMaybe b b'
+    (a, b) <>? (a', b') = (,) <$> (a <>? a')
+                              <*> (b <>? b')
 
 instance (PartialSemigroup a, PartialSemigroup b, PartialSemigroup c) =>
   PartialSemigroup (a, b, c)
   where
-    appendMaybe (a, b, c) (a', b', c') =
-      (,,) <$> appendMaybe a a' <*> appendMaybe b b' <*> appendMaybe c c'
+    (a, b, c) <>? (a', b', c') = (,,) <$> (a <>? a')
+                                      <*> (b <>? b')
+                                      <*> (c <>? c')
 
 --------------------------------------------------------------------------------
 
@@ -171,12 +184,12 @@ the semigroup operation is defined over them. -}
 -- >>> groupAndConcat xs
 -- [Left "a",Right "bc",Left "def"]
 
-groupAndConcat :: forall a. PartialSemigroup a => [a] -> [a]
+groupAndConcat :: PartialSemigroup a => [a] -> [a]
 groupAndConcat =
   \case
     []         -> []
-    x : []     -> [x]
-    x : y : zs -> case appendMaybe x y of
+    [x]        -> [x]
+    x : y : zs -> case x <>? y of
                     Nothing -> x : groupAndConcat (y : zs)
                     Just a  ->     groupAndConcat (a : zs)
 
@@ -201,7 +214,7 @@ the combination of all the values. Otherwise, returns 'Nothing'. -}
 -- >>> partialConcat []
 -- Nothing
 
-partialConcat :: forall a. PartialSemigroup a => [a] -> Maybe a
+partialConcat :: PartialSemigroup a => [a] -> Maybe a
 partialConcat x =
   nonEmpty x >>= partialConcat1
 
@@ -219,13 +232,13 @@ partialConcat x =
 -- >>> partialConcat1 (Left "a" :| [Left "b", Right "c"])
 -- Nothing
 
-partialConcat1 :: forall a. PartialSemigroup a => NonEmpty a -> Maybe a
+partialConcat1 :: PartialSemigroup a => NonEmpty a -> Maybe a
 partialConcat1 =
   \case
     x :| [] -> Just x
     x :| (y : zs) ->
       do
-        a <- appendMaybe x y
+        a <- x <>? y
         partialConcat1 (a :| zs)
 
 -- | ==== Examples
@@ -252,11 +265,12 @@ partialConcat1 =
 -- >>> partialZip xs ys
 -- Nothing
 
-partialZip :: forall a. PartialSemigroup a => [a] -> [a] -> Maybe [a]
+partialZip :: PartialSemigroup a => [a] -> [a] -> Maybe [a]
 partialZip [] [] = Just []
 partialZip [] _  = Nothing
 partialZip _  [] = Nothing
-partialZip (x:xs) (y:ys) = (:) <$> appendMaybe x y <*> partialZip xs ys
+partialZip (x:xs) (y:ys) =
+  (:) <$> (x <>? y) <*> partialZip xs ys
 
 {- | Like 'partialZip', but for non-empty lists. -}
 
@@ -284,18 +298,34 @@ partialZip (x:xs) (y:ys) = (:) <$> appendMaybe x y <*> partialZip xs ys
 -- >>> partialZip1 xs ys
 -- Nothing
 
-partialZip1 :: forall a. PartialSemigroup a
+partialZip1 :: PartialSemigroup a
   => NonEmpty a -> NonEmpty a -> Maybe (NonEmpty a)
 partialZip1 (x :| xs) (y :| ys) =
-  (:|) <$> appendMaybe x y <*> partialZip xs ys
+  (:|) <$> (x <>? y) <*> partialZip xs ys
 
 -- | 'partialZip'
 
 instance PartialSemigroup a => PartialSemigroup (ZipList a)
   where
-    appendMaybe (ZipList x) (ZipList y) = ZipList <$> partialZip x y
+    ZipList x <>? ZipList y = ZipList <$> partialZip x y
 
 --------------------------------------------------------------------------------
+
+{- $partial
+
+For every type @a@ with a 'PartialSemigroup', we can construct a total
+'Semigroup' for @'Maybe' a@ as:
+
+@
+'Just' x <> 'Just' y = x '<>?' y
+_ '<>' _ = 'Nothing'
+@
+
+We don't actually define this instance for 'Maybe' because it already has a
+different 'Semigroup' defined over it, but we do provide the 'Partial' wrapper
+which has this instance.
+
+-}
 
 {- | A wrapper for 'Maybe' with an error-propagating 'Semigroup'. -}
 
@@ -304,12 +334,13 @@ newtype Partial a = Partial { unPartial :: Maybe a }
 
 instance PartialSemigroup a => Semigroup (Partial a)
   where
-    Partial (Just x) <> Partial (Just y) = Partial (appendMaybe x y)
+    Partial (Just x) <> Partial (Just y) = Partial (x <>? y)
     _ <> _ = Partial Nothing
 
 instance Monoid a => Monoid (Partial a)
   where
-    mappend (Partial (Just x)) (Partial (Just y)) = Partial (Just (mappend x y))
+    mappend (Partial (Just x)) (Partial (Just y)) =
+      Partial (Just (mappend x y))
     mappend _ _ = Partial Nothing
 
     mempty = Partial (Just mempty)
@@ -318,11 +349,11 @@ instance Monoid a => Monoid (Partial a)
 
 {- $total
 
-Every type with a 'Semigroup' can be given a trivial 'PartialSemigroup' instance
-defined as:
+For every type with a 'Semigroup', we can construct a trivial 'PartialSemigroup'
+as:
 
 @
-'appendMaybe' x y = 'Just' (x <> y)
+x '<>?' y = 'Just' (x '<>' y)
 @
 
 Additionally, any type with a 'Semigroup' can be treated as a 'PartialSemigroup'
@@ -331,13 +362,12 @@ by lifting it into 'Total'.
 -}
 
 {- | A wrapper to turn any value with a 'Semigroup' instance into a value with a
-'PartialSemigroup' instance whose 'appendMaybe' operator always returns 'Just'.
--}
+'PartialSemigroup' instance whose '<>?' operator always returns 'Just'. -}
 
 -- | ==== Examples
 
 -- |
--- >>> appendMaybe (Total "ab") (Total "cd")
+-- >>> Total "ab" <>? Total "cd"
 -- Just (Total {unTotal = "abcd"})
 
 -- |
@@ -351,8 +381,7 @@ newtype Total a = Total { unTotal :: a }
 
 instance Semigroup a => PartialSemigroup (Total a)
   where
-    appendMaybe (Total x) (Total y) =
-      Just (Total (x <> y))
+    Total x <>? Total y = Just (Total (x <> y))
 
 --------------------------------------------------------------------------------
 
@@ -363,12 +392,12 @@ only over 'Left' values. -}
 
 -- | Two 'Left's make a 'Just'.
 --
--- >>> appendMaybe (AppendLeft (Left "ab")) (AppendLeft (Left "cd"))
+-- >>> AppendLeft (Left "ab") <>? AppendLeft (Left "cd")
 -- Just (AppendLeft {unAppendLeft = Left "abcd"})
 
 -- | Anything else produces 'Nothing'
 --
--- >>> appendMaybe (AppendLeft (Right "ab")) (AppendLeft (Right "cd"))
+-- >>> AppendLeft (Right "ab") <>? AppendLeft (Right "cd")
 -- Nothing
 
 -- | 'groupAndConcat' combines consecutive 'Left' values, leaving the 'Right'
@@ -383,9 +412,9 @@ newtype AppendLeft a b = AppendLeft { unAppendLeft :: Either a b }
 
 instance PartialSemigroup a => PartialSemigroup (AppendLeft a b)
   where
-    appendMaybe (AppendLeft (Left x)) (AppendLeft (Left y)) =
-      AppendLeft . Left <$> appendMaybe x y
-    appendMaybe _ _ = Nothing
+    AppendLeft (Left x) <>? AppendLeft (Left y) =
+      AppendLeft . Left <$> (x <>? y)
+    _ <>? _ = Nothing
 
 --------------------------------------------------------------------------------
 
@@ -396,12 +425,12 @@ only over 'Right' values. -}
 
 -- | Two 'Right's make a 'Just'.
 --
--- >>> appendMaybe (AppendRight (Right "ab")) (AppendRight (Right "cd"))
+-- >>> AppendRight (Right "ab") <>? AppendRight (Right "cd")
 -- Just (AppendRight {unAppendRight = Right "abcd"})
 
 -- | Anything else produces 'Nothing'
 --
--- >>> appendMaybe (AppendRight (Left "ab")) (AppendRight (Left "cd"))
+-- >>> AppendRight (Left "ab") <>? AppendRight (Left "cd")
 -- Nothing
 
 -- | 'groupAndConcat' combines consecutive 'Right' values, leaving the 'Left'
@@ -416,6 +445,6 @@ newtype AppendRight a b = AppendRight { unAppendRight :: Either a b }
 
 instance PartialSemigroup b => PartialSemigroup (AppendRight a b)
   where
-    appendMaybe (AppendRight (Right x)) (AppendRight (Right y)) =
-      AppendRight . Right <$> appendMaybe x y
-    appendMaybe _ _ = Nothing
+    AppendRight (Right x) <>? AppendRight (Right y) =
+      AppendRight . Right <$> (x <>? y)
+    _ <>? _ = Nothing

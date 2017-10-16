@@ -1,7 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 -- partial-semigroup
-import Data.PartialSemigroup (Total (..), AppendLeft (..), AppendRight (..))
+import Data.PartialSemigroup (AppendLeft (..), AppendRight (..), Total (..))
 
 -- partial-semigroup-test
 import Test.PartialSemigroup (assoc)

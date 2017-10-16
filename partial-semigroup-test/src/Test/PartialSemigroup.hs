@@ -11,12 +11,12 @@ import Data.PartialSemigroup
 import Hedgehog
 
 -- base
-import Control.Monad (mzero)
+import Control.Applicative (Alternative, empty)
 
 {- | The partial semigroup associativity axiom:
 
-For all @x@, @y@, @z@: If @appendMaybe x y = Just xy@ and
-@appendMaybe y z = Just yz@, then @appendMaybe x yz = appendMaybe xy z@. -}
+For all @x@, @y@, @z@: If @x '<>?' y = 'Just' xy@ and @y '<>?' z = 'Just' yz@,
+then @x '<>?' yz = xy '<>?' z@. -}
 
 assoc :: (PartialSemigroup a, Eq a, Show a) => Gen a -> Property
 assoc gen = property $ do
@@ -25,7 +25,10 @@ assoc gen = property $ do
   y <- forAll gen
   z <- forAll gen
 
-  xy <- maybe mzero pure (appendMaybe x y)
-  yz <- maybe mzero pure (appendMaybe y z)
+  xy <- liftMaybe (x <>? y)
+  yz <- liftMaybe (y <>? z)
 
-  appendMaybe x yz === appendMaybe xy z
+  x <>? yz === xy <>? z
+
+liftMaybe :: Alternative f => Maybe a -> f a
+liftMaybe = maybe empty pure

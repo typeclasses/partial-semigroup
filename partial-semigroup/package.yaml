@@ -8,7 +8,7 @@ synopsis: |
 description: |
   A partial semigroup is like a semigroup, but the
   operator is partial. We represent this in Haskell
-  as a total function @appendMaybe :: a -> a -> Maybe a@.
+  as a total function @(<>?) :: a -> a -> Maybe a@.
 
 category: Algebra
 
