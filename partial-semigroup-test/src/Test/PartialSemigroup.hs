@@ -1,5 +1,3 @@
-{-# LANGUAGE MonadComprehensions #-}
-
 module Test.PartialSemigroup
   ( assoc
   ) where
