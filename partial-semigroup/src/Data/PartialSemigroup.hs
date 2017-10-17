@@ -1,5 +1,3 @@
-{-# LANGUAGE LambdaCase          #-}
-
 module Data.PartialSemigroup
   (
   -- * Partial semigroup
@@ -184,8 +182,8 @@ the semigroup operation is defined over them. -}
 -- [Left "a",Right "bc",Left "def"]
 
 groupAndConcat :: PartialSemigroup a => [a] -> [a]
-groupAndConcat =
-  \case
+groupAndConcat as =
+  case as of
     []         -> []
     [x]        -> [x]
     x : y : zs -> case x <>? y of
@@ -232,8 +230,8 @@ partialConcat x =
 -- Nothing
 
 partialConcat1 :: PartialSemigroup a => NonEmpty a -> Maybe a
-partialConcat1 =
-  \case
+partialConcat1 as =
+  case as of
     x :| [] -> Just x
     x :| (y : zs) ->
       do
