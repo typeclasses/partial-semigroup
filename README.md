@@ -62,7 +62,7 @@ For all `x`, `y`, `z`:
 
       * `x <> (y <> z) = ⊥` if and only if `(x <> y) <> z = ⊥`, and
 
-      * where none of the terms are ⊥, then the axiom for total semigroups
+      * where none of the terms are ⊥, the axiom for total semigroups
         `x <> (y <> z) = (x <> y) <> z` must hold.
 
 #### Definition 2: In terms of `PartialSemigroup`
