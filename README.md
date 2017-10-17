@@ -69,7 +69,7 @@ For all `x`, `y`, `z`:
 
 For all `x`, `y`, `z`:
 
-  * If `x <>? y = Just xy` and `y <>? z` = Just yz`, then
+  * If `x <>? y = Just xy` and `y <>? z = Just yz`, then
 
       * `x <>? yz = xy <>? z`.
 
