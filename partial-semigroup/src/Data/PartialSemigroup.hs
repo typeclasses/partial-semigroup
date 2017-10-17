@@ -1,5 +1,4 @@
 {-# LANGUAGE LambdaCase          #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 
 module Data.PartialSemigroup
   (
