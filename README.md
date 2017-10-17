@@ -34,8 +34,8 @@ A *partial semigroup* can be defined in two equivalent ways:
 
   1. As a semigroup where `<>` is a *partial function* (that is, we admit the
      possibility that `x <> y = ⊥` for some `x` and `y`)
-  2. As a new kind of algebratic structure where the operation is *total* (that
-     is, not partial) but returns `Maybe a` instead of `a`.
+  2. As a new kind of algebratic structure where the operation is *total* (not
+     partial) but returns `Maybe a` instead of `a`.
 
 The second definition is the approach taken by this project. The
 `partial-semigroup` package defined a `PartialSemigroup` class, which looks like
