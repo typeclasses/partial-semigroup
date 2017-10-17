@@ -1,0 +1,8 @@
+resolver: lts-8.24
+
+packages:
+  - partial-semigroup
+  - partial-semigroup-test
+
+extra-deps:
+  - hedgehog-0.5
