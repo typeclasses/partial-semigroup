@@ -349,8 +349,8 @@ instance Monoid a => Monoid (Partial a)
 
 {- $total
 
-For every type with a 'Semigroup', we can construct a trivial 'PartialSemigroup'
-as:
+For every type with a 'Semigroup', we can trivially construct a
+'PartialSemigroup' as:
 
 @
 x '<>?' y = 'Just' (x '<>' y)
