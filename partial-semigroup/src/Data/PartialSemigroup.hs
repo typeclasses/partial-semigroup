@@ -30,7 +30,7 @@ module Data.PartialSemigroup
 
   ) where
 
-import Control.Applicative   (ZipList (..), (<*>))
+import Control.Applicative   (ZipList (..))
 import Data.Functor.Identity (Identity (..))
 import Data.List.NonEmpty    (NonEmpty (..), nonEmpty)
 import Data.Monoid           (Product (..), Sum (..))
