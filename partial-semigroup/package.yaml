@@ -28,6 +28,8 @@ library:
 
 dependencies:
   - base >= 4 && < 4.11
+
+  # provides Data.Semigroup, which is also available in base >= 4.9.0.0
   - semigroups >= 0.8.4 && < 1
 
 tests:
