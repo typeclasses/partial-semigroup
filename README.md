@@ -54,7 +54,7 @@ the situations wherein `x <> y = ⊥`. First we'll express the axiom in terms
 of `Semigroup` and `⊥`, and then we'll rephrase it in terms of
 `PartialSemigroup`.
 
-#### Definition 1: in terms of `Semigroup` and `⊥`
+#### Definition 1: In terms of `Semigroup` and `⊥`
 
 For all `x`, `y`, `z`:
 
