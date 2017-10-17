@@ -37,7 +37,8 @@ A *partial semigroup* can be defined in two equivalent ways:
   2. As a new kind of algebraic structure where the operation is *total* (not
      partial) but returns `Maybe a` instead of `a`.
 
-The second definition is the approach taken by this project. The
+The second definition is the approach we take here (though we will refer back to
+this first definition when we discuss the associativity axiom). The
 `partial-semigroup` package defined a `PartialSemigroup` class, which looks like
 this:
 
