@@ -182,13 +182,12 @@ the semigroup operation is defined over them. -}
 -- [Left "a",Right "bc",Left "def"]
 
 groupAndConcat :: PartialSemigroup a => [a] -> [a]
-groupAndConcat as =
-  case as of
-    []         -> []
-    [x]        -> [x]
-    x : y : zs -> case x <>? y of
-                    Nothing -> x : groupAndConcat (y : zs)
-                    Just a  ->     groupAndConcat (a : zs)
+groupAndConcat [] = []
+groupAndConcat [x] = [x]
+groupAndConcat (x : y : zs) =
+  case x <>? y of
+    Nothing -> x : groupAndConcat (y : zs)
+    Just a  ->     groupAndConcat (a : zs)
 
 {- | If @xs@ is nonempty and the partial semigroup operator is defined for all
 pairs of values in @xs@, then @'partialConcat' xs@ produces a 'Just' result with
@@ -230,13 +229,11 @@ partialConcat x =
 -- Nothing
 
 partialConcat1 :: PartialSemigroup a => NonEmpty a -> Maybe a
-partialConcat1 as =
-  case as of
-    x :| [] -> Just x
-    x :| (y : zs) ->
-      do
-        a <- x <>? y
-        partialConcat1 (a :| zs)
+partialConcat1 (x :| []) = Just x
+partialConcat1 (x :| (y : zs)) =
+  do
+    a <- x <>? y
+    partialConcat1 (a :| zs)
 
 -- | ==== Examples
 
