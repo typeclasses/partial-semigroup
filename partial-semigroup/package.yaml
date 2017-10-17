@@ -27,7 +27,8 @@ library:
     - Data.PartialSemigroup
 
 dependencies:
-  - base >= 4.9 && < 4.10
+  - base >= 4 && < 4.11
+  - semigroups >= 0.8.4 && < 1
 
 tests:
 
