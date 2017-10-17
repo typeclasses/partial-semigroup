@@ -1,5 +1,5 @@
 name: partial-semigroup-test
-version: 0.1.0.1
+version: 0.1.0.3
 github: chris-martin/partial-semigroup
 
 synopsis: |
@@ -29,4 +29,4 @@ library:
 dependencies:
   - base >= 4.9 && < 4.10
   - hedgehog >= 0.5 && < 0.6
-  - partial-semigroup
+  - partial-semigroup >= 0.1 && <0.2
