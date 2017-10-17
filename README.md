@@ -39,8 +39,8 @@ A *partial semigroup* can be defined in two equivalent ways:
 
 The second definition is the approach we take here (though we will refer back to
 this first definition when we discuss the associativity axiom). The
-`partial-semigroup` package defines a `PartialSemigroup` class, which looks like
-this:
+`partial-semigroup` package defines the `PartialSemigroup` class, which looks
+like this:
 
 ```haskell
 class PartialSemigroup a where (<>?) :: a -> a -> Maybe a
