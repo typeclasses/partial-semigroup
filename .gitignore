@@ -1,6 +1,7 @@
-*.cabal
 cabal.config
+cabal.project.local
 cabal.sandbox.config
 dist/
+dist-newstyle/
 .cabal-sandbox/
 .stack-work/

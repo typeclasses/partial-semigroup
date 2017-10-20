@@ -1,4 +1,7 @@
-module Test.PartialSemigroup
+{- | Utilities for testing partial semigroups using the @hedgehog@ property
+testing library. -}
+
+module Test.PartialSemigroup.Hedgehog
   ( assoc
   ) where
 
@@ -6,7 +9,7 @@ module Test.PartialSemigroup
 import Data.PartialSemigroup
 
 -- hedgehog
-import Hedgehog
+import Hedgehog (Gen, Property, forAll, (===), property)
 
 -- base
 import Control.Applicative (Alternative, empty)

@@ -4,7 +4,7 @@
 import Data.PartialSemigroup (AppendLeft (..), AppendRight (..), Total (..))
 
 -- partial-semigroup-test
-import Test.PartialSemigroup (assoc)
+import Test.PartialSemigroup.Hedgehog (assoc)
 
 -- hedgehog
 import           Hedgehog       (Gen, Property, withDiscards)
@@ -29,6 +29,9 @@ main = do
   success <- Hedgehog.checkParallel $$(Hedgehog.discover)
   unless success Exit.exitFailure
 
+
+--------------------------------------------------------------------------------
+--  Properties
 --------------------------------------------------------------------------------
 
 prop_unit_assoc :: Property
@@ -77,6 +80,9 @@ prop_appendRight_assoc =
   withDiscards 1000 $
   assoc (AppendRight <$> genEither)
 
+
+--------------------------------------------------------------------------------
+--  Generators
 --------------------------------------------------------------------------------
 
 genStr :: Gen String

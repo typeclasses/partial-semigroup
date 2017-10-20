@@ -1,3 +1,12 @@
+{-# OPTIONS_GHC -fno-warn-dodgy-exports #-}
+
+{-# LANGUAGE NoImplicitPrelude #-}
+
+{- | A /semigroup/ ('Semigroup') is a set with a binary associative operation
+(@<>@). This module defines a /partial semigroup/ ('PartialSemigroup'), a
+semigroup for which @<>@ is not required to be defined over all inputs.
+-}
+
 module Data.PartialSemigroup
   (
   -- * Partial semigroup
@@ -30,17 +39,18 @@ module Data.PartialSemigroup
 
   ) where
 
-import Control.Applicative   (ZipList (..))
-import Data.Functor.Identity (Identity (..))
-import Data.List.NonEmpty    (NonEmpty (..), nonEmpty)
-import Data.Monoid           (Product (..), Sum (..))
-import Data.Semigroup        (Semigroup (..))
+import Data.PartialSemigroup.Identity ()
 
--- $setup
---
--- >>> :set -XExtendedDefaultRules
--- >>> import Data.Monoid
--- >>> import Prelude
+import Control.Applicative (ZipList (..), (<$>), (<*>))
+import Control.Monad       ((>>=))
+import Data.Either         (Either (..))
+import Data.Function       ((.))
+import Data.List.NonEmpty  (NonEmpty (..), nonEmpty)
+import Data.Maybe          (Maybe (..))
+import Data.Monoid         (Product (..), Sum (..))
+import Data.Semigroup      (Monoid (..), Semigroup (..))
+
+import Prelude (Eq, Num (..), Ord, Read, Show)
 
 -- The same fixity as <>
 infixr 6 <>?
@@ -94,12 +104,6 @@ class PartialSemigroup a
 --------------------------------------------------------------------------------
 
 instance PartialSemigroup () where () <>? () = Just ()
-
---------------------------------------------------------------------------------
-
-instance PartialSemigroup a => PartialSemigroup (Identity a)
-  where
-    Identity x <>? Identity y = Identity <$> (x <>? y)
 
 --------------------------------------------------------------------------------
 
@@ -170,16 +174,18 @@ instance (PartialSemigroup a, PartialSemigroup b, PartialSemigroup c) =>
 --------------------------------------------------------------------------------
 
 {- | Apply a semigroup operation to any pairs of consecutive list elements where
-the semigroup operation is defined over them. -}
+the semigroup operation is defined over them.
 
--- | ==== Examples
+==== Examples
 
--- | For 'Either', 'groupAndConcat' combines contiguous sublists of 'Left' and
--- contiguous sublists of 'Right'.
---
--- >>> xs = [Left "a", Right "b", Right "c", Left "d", Left "e", Left "f"]
--- >>> groupAndConcat xs
--- [Left "a",Right "bc",Left "def"]
+For 'Either', 'groupAndConcat' combines contiguous sublists of 'Left' and
+contiguous sublists of 'Right'.
+
+>>> xs = [Left "a", Right "b", Right "c", Left "d", Left "e", Left "f"]
+>>> groupAndConcat xs
+[Left "a",Right "bc",Left "def"]
+
+-}
 
 groupAndConcat :: PartialSemigroup a => [a] -> [a]
 groupAndConcat [] = []
@@ -191,42 +197,46 @@ groupAndConcat (x : y : zs) =
 
 {- | If @xs@ is nonempty and the partial semigroup operator is defined for all
 pairs of values in @xs@, then @'partialConcat' xs@ produces a 'Just' result with
-the combination of all the values. Otherwise, returns 'Nothing'. -}
+the combination of all the values. Otherwise, returns 'Nothing'.
 
--- | ==== Examples
+==== Examples
 
--- | When all values can combine, we get a 'Just' of their combination.
---
--- >>> partialConcat [Left "a", Left "b", Left "c"]
--- Just (Left "abc")
+When all values can combine, we get a 'Just' of their combination.
 
--- | When some values cannot be combined, we get 'Nothing'.
---
--- >>> partialConcat [Left "a", Left "b", Right "c"]
--- Nothing
+>>> partialConcat [Left "a", Left "b", Left "c"]
+Just (Left "abc")
 
--- | When the list is empty, we get 'Nothing'.
---
--- >>> partialConcat []
--- Nothing
+When some values cannot be combined, we get 'Nothing'.
+
+>>> partialConcat [Left "a", Left "b", Right "c"]
+Nothing
+
+When the list is empty, we get 'Nothing'.
+
+>>> partialConcat []
+Nothing
+
+-}
 
 partialConcat :: PartialSemigroup a => [a] -> Maybe a
 partialConcat x =
   nonEmpty x >>= partialConcat1
 
-{- | Like 'partialConcat', but for non-empty lists. -}
+{- | Like 'partialConcat', but for non-empty lists.
 
--- | ==== Examples
+==== Examples
 
--- | When all values can combine, we get a 'Just' of their combination.
---
--- >>> partialConcat1 (Left "a" :| [Left "b", Left "c"])
--- Just (Left "abc")
+When all values can combine, we get a 'Just' of their combination.
 
--- | When some values cannot be combined, we get 'Nothing'.
---
--- >>> partialConcat1 (Left "a" :| [Left "b", Right "c"])
--- Nothing
+>>> partialConcat1 (Left "a" :| [Left "b", Left "c"])
+Just (Left "abc")
+
+When some values cannot be combined, we get 'Nothing'.
+
+>>> partialConcat1 (Left "a" :| [Left "b", Right "c"])
+Nothing
+
+-}
 
 partialConcat1 :: PartialSemigroup a => NonEmpty a -> Maybe a
 partialConcat1 (x :| []) = Just x
@@ -235,29 +245,31 @@ partialConcat1 (x :| (y : zs)) =
     a <- x <>? y
     partialConcat1 (a :| zs)
 
--- | ==== Examples
+{- | ==== Examples
 
--- | If lists are the same length and each pair of elements successfully, then
--- we get a 'Just' result.
---
--- >>> xs = [Left "a", Left "b", Right "c"]
--- >>> ys = [Left "1", Left "2", Right "3"]
--- >>> partialZip xs ys
--- Just [Left "a1",Left "b2",Right "c3"]
+If lists are the same length and each pair of elements successfully, then we get
+a 'Just' result.
 
--- | If the pairs do not all combine, then we get 'Nothing'.
---
--- >>> xs = [Left "a", Left "b", Right "c"]
--- >>> ys = [Left "1", Right "2", Right "3"]
--- >>> partialZip xs ys
--- Nothing
+>>> xs = [Left "a", Left "b", Right "c"]
+>>> ys = [Left "1", Left "2", Right "3"]
+>>> partialZip xs ys
+Just [Left "a1",Left "b2",Right "c3"]
 
--- | If the lists have different lengths, then we get 'Nothing'.
---
--- >>> xs = [Left "a", Left "b", Right "c"]
--- >>> ys = [Left "1", Left "2"]
--- >>> partialZip xs ys
--- Nothing
+If the pairs do not all combine, then we get 'Nothing'.
+
+>>> xs = [Left "a", Left "b", Right "c"]
+>>> ys = [Left "1", Right "2", Right "3"]
+>>> partialZip xs ys
+Nothing
+
+If the lists have different lengths, then we get 'Nothing'.
+
+>>> xs = [Left "a", Left "b", Right "c"]
+>>> ys = [Left "1", Left "2"]
+>>> partialZip xs ys
+Nothing
+
+-}
 
 partialZip :: PartialSemigroup a => [a] -> [a] -> Maybe [a]
 partialZip [] [] = Just []
@@ -266,31 +278,33 @@ partialZip _  [] = Nothing
 partialZip (x:xs) (y:ys) =
   (:) <$> (x <>? y) <*> partialZip xs ys
 
-{- | Like 'partialZip', but for non-empty lists. -}
+{- | Like 'partialZip', but for non-empty lists.
 
--- | ==== Examples
+==== Examples
 
--- | If lists are the same length and each pair of elements successfully, then
--- we get a 'Just' result.
---
--- >>> xs = Left "a" :| [Left "b", Right "c"]
--- >>> ys = Left "1" :| [Left "2", Right "3"]
--- >>> partialZip1 xs ys
--- Just (Left "a1" :| [Left "b2",Right "c3"])
+If lists are the same length and each pair of elements successfully, then we get
+a 'Just' result.
 
--- | If the pairs do not all combine, then we get 'Nothing'.
---
--- >>> xs = Left "a" :| [Left "b", Right "c"]
--- >>> ys = Left "1" :| [Right "2", Right "3"]
--- >>> partialZip1 xs ys
--- Nothing
+>>> xs = Left "a" :| [Left "b", Right "c"]
+>>> ys = Left "1" :| [Left "2", Right "3"]
+>>> partialZip1 xs ys
+Just (Left "a1" :| [Left "b2",Right "c3"])
 
--- | If the lists have different lengths, then we get 'Nothing'.
---
--- >>> xs = Left "a" :| [Left "b", Right "c"]
--- >>> ys = Left "1" :| [Left "2"]
--- >>> partialZip1 xs ys
--- Nothing
+If the pairs do not all combine, then we get 'Nothing'.
+
+>>> xs = Left "a" :| [Left "b", Right "c"]
+>>> ys = Left "1" :| [Right "2", Right "3"]
+>>> partialZip1 xs ys
+Nothing
+
+If the lists have different lengths, then we get 'Nothing'.
+
+>>> xs = Left "a" :| [Left "b", Right "c"]
+>>> ys = Left "1" :| [Left "2"]
+>>> partialZip1 xs ys
+Nothing
+
+-}
 
 partialZip1 :: PartialSemigroup a
   => NonEmpty a -> NonEmpty a -> Maybe (NonEmpty a)
@@ -356,19 +370,19 @@ by lifting it into 'Total'.
 -}
 
 {- | A wrapper to turn any value with a 'Semigroup' instance into a value with a
-'PartialSemigroup' instance whose '<>?' operator always returns 'Just'. -}
+'PartialSemigroup' instance whose '<>?' operator always returns 'Just'.
 
--- | ==== Examples
+==== Examples
 
--- |
--- >>> Total "ab" <>? Total "cd"
--- Just (Total {unTotal = "abcd"})
+>>> Total "ab" <>? Total "cd"
+Just (Total {unTotal = "abcd"})
 
--- |
--- >>> f = getProduct . unTotal
--- >>> g = Total . Product
--- >>> fmap f . partialConcat . fmap g $ [1..4]
--- Just 24
+>>> f = getProduct . unTotal
+>>> g = Total . Product
+>>> fmap f . partialConcat . fmap g $ [1..4]
+Just 24
+
+-}
 
 newtype Total a = Total { unTotal :: a }
   deriving (Eq, Ord, Read, Show)
@@ -380,26 +394,28 @@ instance Semigroup a => PartialSemigroup (Total a)
 --------------------------------------------------------------------------------
 
 {- | A wrapper for 'Either' where the 'PartialSemigroup' operator is defined
-only over 'Left' values. -}
+only over 'Left' values.
 
--- | ==== Examples
+==== Examples
 
--- | Two 'Left's make a 'Just'.
---
--- >>> AppendLeft (Left "ab") <>? AppendLeft (Left "cd")
--- Just (AppendLeft {unAppendLeft = Left "abcd"})
+Two 'Left's make a 'Just'.
 
--- | Anything else produces 'Nothing'
---
--- >>> AppendLeft (Right "ab") <>? AppendLeft (Right "cd")
--- Nothing
+>>> AppendLeft (Left "ab") <>? AppendLeft (Left "cd")
+Just (AppendLeft {unAppendLeft = Left "abcd"})
 
--- | 'groupAndConcat' combines consecutive 'Left' values, leaving the 'Right'
--- values unmodified.
---
--- >>> xs = [Left "a", Left "b", Right "c", Right "d", Left "e", Left "f"]
--- >>> fmap unAppendLeft . groupAndConcat . fmap AppendLeft $ xs
--- [Left "ab",Right "c",Right "d",Left "ef"]
+Anything else produces 'Nothing'
+
+>>> AppendLeft (Right "ab") <>? AppendLeft (Right "cd")
+Nothing
+
+'groupAndConcat' combines consecutive 'Left' values, leaving the 'Right' values
+unmodified.
+
+>>> xs = [Left "a", Left "b", Right "c", Right "d", Left "e", Left "f"]
+>>> fmap unAppendLeft . groupAndConcat . fmap AppendLeft $ xs
+[Left "ab",Right "c",Right "d",Left "ef"]
+
+-}
 
 newtype AppendLeft a b = AppendLeft { unAppendLeft :: Either a b }
   deriving (Eq, Ord, Read, Show)
@@ -413,26 +429,28 @@ instance PartialSemigroup a => PartialSemigroup (AppendLeft a b)
 --------------------------------------------------------------------------------
 
 {- | A wrapper for 'Either' where the 'PartialSemigroup' operator is defined
-only over 'Right' values. -}
+only over 'Right' values.
 
--- | ==== Examples
+==== Examples
 
--- | Two 'Right's make a 'Just'.
---
--- >>> AppendRight (Right "ab") <>? AppendRight (Right "cd")
--- Just (AppendRight {unAppendRight = Right "abcd"})
+Two 'Right's make a 'Just'.
 
--- | Anything else produces 'Nothing'
---
--- >>> AppendRight (Left "ab") <>? AppendRight (Left "cd")
--- Nothing
+>>> AppendRight (Right "ab") <>? AppendRight (Right "cd")
+Just (AppendRight {unAppendRight = Right "abcd"})
 
--- | 'groupAndConcat' combines consecutive 'Right' values, leaving the 'Left'
--- values unmodified.
---
--- >>> xs = [Left "a", Left "b", Right "c", Right "d", Left "e", Left "f"]
--- >>> fmap unAppendRight . groupAndConcat . fmap AppendRight $ xs
--- [Left "a",Left "b",Right "cd",Left "e",Left "f"]
+Anything else produces 'Nothing'
+
+>>> AppendRight (Left "ab") <>? AppendRight (Left "cd")
+Nothing
+
+'groupAndConcat' combines consecutive 'Right' values, leaving the 'Left' values
+unmodified.
+
+>>> xs = [Left "a", Left "b", Right "c", Right "d", Left "e", Left "f"]
+>>> fmap unAppendRight . groupAndConcat . fmap AppendRight $ xs
+[Left "a",Left "b",Right "cd",Left "e",Left "f"]
+
+-}
 
 newtype AppendRight a b = AppendRight { unAppendRight :: Either a b }
   deriving (Eq, Ord, Read, Show)

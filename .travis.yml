@@ -1,22 +1,22 @@
 language: nix
 
 env:
-  global:
-    - LC_ALL=en_US.UTF-8
-  matrix:
-    - STACK_YAML=stack-8.yaml
-    - STACK_YAML=stack-9.yaml
+  - GHC_VERSION="7.8.4"
+  - GHC_VERSION="7.10.3"
+  - GHC_VERSION="8.0.2"
+  - GHC_VERSION="8.2.1"
 
 cache:
   directories:
-    - $HOME/.stack
+    - $HOME/.cabal/packages
+    - $HOME/.cabal/store
     - /nix/store
 
 before_install:
   - nix-env -i stack
 
 script:
-  - stack test --nix --no-terminal --stack-yaml $STACK_YAML
+  - nix-shell --argstr ghc-version $GHC_VERSION --run ci-script
 
 notifications:
   email: false
