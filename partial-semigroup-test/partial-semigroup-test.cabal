@@ -1,5 +1,5 @@
 name: partial-semigroup-test
-version: 0.1.0.3
+version: 0.2.0.1
 synopsis: Testing utilities for the partial-semigroup package
 category: Algebra, Testing
 
@@ -35,4 +35,4 @@ library
 
   if flag(enable-hedgehog)
     reexported-modules: Test.PartialSemigroup.Hedgehog
-    build-depends: partial-semigroup-hedgehog >=0.1 && <0.2
+    build-depends: partial-semigroup-hedgehog >=0.2 && <0.3
