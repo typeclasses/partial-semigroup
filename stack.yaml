@@ -1,5 +1,1 @@
-resolver: lts-9.9
-
-packages:
-  - partial-semigroup
-  - partial-semigroup-test
+stack-nightly.yaml

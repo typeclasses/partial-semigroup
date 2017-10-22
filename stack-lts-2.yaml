@@ -1,0 +1,13 @@
+# ghc 7.8.4
+# base 4.7.0.2
+
+resolver: lts-2.22
+
+packages:
+  - partial-semigroup
+
+flags:
+  partial-semigroup:
+    enable-hedgehog: false
+    semigroup-in-base: false
+    identity-in-base: false

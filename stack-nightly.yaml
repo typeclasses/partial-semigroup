@@ -1,0 +1,9 @@
+# ghc ghc-8.2.1
+# base 4.10.0.0
+
+resolver: nightly-2017-10-20
+
+packages:
+  - partial-semigroup
+  - partial-semigroup-hedgehog
+  - partial-semigroup-test

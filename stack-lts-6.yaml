@@ -1,0 +1,23 @@
+# ghc 7.10.3
+# base 4.8.2.0
+
+resolver: lts-6.35
+
+packages:
+  - partial-semigroup
+  - partial-semigroup-hedgehog
+  - partial-semigroup-test
+
+extra-deps:
+  - hedgehog-0.5
+  - transformers-0.5.2.0
+  - transformers-compat-0.5.1.4
+  - wl-pprint-annotated-0.1.0.0
+
+flags:
+  partial-semigroup:
+    semigroup-in-base: false
+
+nix:
+  packages:
+    - "haskellPackages.happy"

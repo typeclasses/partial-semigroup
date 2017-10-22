@@ -1,7 +1,10 @@
 {-# OPTIONS_GHC -fno-warn-type-defaults #-}
 
+{-# LANGUAGE CPP                  #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
 {-# LANGUAGE TemplateHaskell      #-}
+
+#ifdef HEDGEHOG
 
 -- partial-semigroup
 import Data.PartialSemigroup (AppendLeft (..), AppendRight (..),
@@ -184,7 +187,7 @@ prop_AppendRight_Nothing :: Property
 prop_AppendRight_Nothing = example $
   let
     x = AppendRight (Left "ab")
-    y =AppendRight (Left "cd")
+    y = AppendRight (Left "cd")
   in
     x <>? y === Nothing
 
@@ -195,3 +198,10 @@ prop_AppendRight_groupAndConcat = example $
     f = fmap unAppendRight . groupAndConcat . fmap AppendRight
   in
     f xs === [Left "a", Left "b", Right "cd", Left "e", Left "f"]
+
+#else
+
+main :: IO ()
+main = putStrLn "Tests using hedgehog are disabled."
+
+#endif

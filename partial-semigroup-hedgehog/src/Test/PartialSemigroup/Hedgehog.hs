@@ -6,10 +6,10 @@ module Test.PartialSemigroup.Hedgehog
   ) where
 
 -- partial-semigroup
-import Data.PartialSemigroup
+import Data.PartialSemigroup (PartialSemigroup (..))
 
 -- hedgehog
-import Hedgehog (Gen, Property, forAll, (===), property)
+import Hedgehog (Gen, Property, forAll, property, (===))
 
 -- base
 import Control.Applicative (Alternative, empty)

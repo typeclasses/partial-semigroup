@@ -1,4 +1,7 @@
+{-# LANGUAGE CPP             #-}
 {-# LANGUAGE TemplateHaskell #-}
+
+#ifdef HEDGEHOG
 
 -- partial-semigroup
 import Data.PartialSemigroup (AppendLeft (..), AppendRight (..), Total (..))
@@ -99,3 +102,10 @@ genEither =
     [ Left <$> genStr
     , Right <$> genSum
     ]
+
+#else
+
+main :: IO ()
+main = putStrLn "Tests using hedgehog are disabled."
+
+#endif

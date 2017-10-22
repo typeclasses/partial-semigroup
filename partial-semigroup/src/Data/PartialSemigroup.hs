@@ -1,11 +1,9 @@
-{-# OPTIONS_GHC -fno-warn-dodgy-exports #-}
-
+{-# LANGUAGE CPP               #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
 {- | A /semigroup/ ('Semigroup') is a set with a binary associative operation
 (@<>@). This module defines a /partial semigroup/ ('PartialSemigroup'), a
-semigroup for which @<>@ is not required to be defined over all inputs.
--}
+semigroup for which @<>@ is not required to be defined over all inputs. -}
 
 module Data.PartialSemigroup
   (
@@ -39,8 +37,6 @@ module Data.PartialSemigroup
 
   ) where
 
-import Data.PartialSemigroup.Identity ()
-
 import Control.Applicative (ZipList (..), (<$>), (<*>))
 import Control.Monad       ((>>=))
 import Data.Either         (Either (..))
@@ -49,8 +45,11 @@ import Data.List.NonEmpty  (NonEmpty (..), nonEmpty)
 import Data.Maybe          (Maybe (..))
 import Data.Monoid         (Product (..), Sum (..))
 import Data.Semigroup      (Monoid (..), Semigroup (..))
+import Prelude             (Eq, Num (..), Ord, Read, Show)
 
-import Prelude (Eq, Num (..), Ord, Read, Show)
+#ifdef IDENTITY
+import Data.Functor.Identity (Identity (..))
+#endif
 
 -- The same fixity as <>
 infixr 6 <>?
@@ -103,18 +102,33 @@ class PartialSemigroup a
 
 --------------------------------------------------------------------------------
 
-instance PartialSemigroup () where () <>? () = Just ()
+instance PartialSemigroup ()
+  where
+    () <>? () = Just ()
 
 --------------------------------------------------------------------------------
 
-instance PartialSemigroup [a] where
-  x <>? y = Just (x <> y)
+instance PartialSemigroup [a]
+  where
+    x <>? y = Just (x <> y)
 
-instance Num a => PartialSemigroup (Sum a) where
-  x <>? y = Just (x <> y)
+--------------------------------------------------------------------------------
 
-instance Num a => PartialSemigroup (Product a) where
-  x <>? y = Just (x <> y)
+instance Num a => PartialSemigroup (Sum a)
+  where
+    x <>? y = Just (x <> y)
+
+instance Num a => PartialSemigroup (Product a)
+  where
+    x <>? y = Just (x <> y)
+
+--------------------------------------------------------------------------------
+
+#ifdef IDENTITY
+instance PartialSemigroup a => PartialSemigroup (Identity a)
+  where
+    Identity x <>? Identity y = Identity <$> (x <>? y)
+#endif
 
 --------------------------------------------------------------------------------
 

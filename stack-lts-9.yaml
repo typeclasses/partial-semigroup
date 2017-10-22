@@ -1,0 +1,9 @@
+# ghc 8.0.2
+# base 4.9.1.0
+
+resolver: lts-9.9
+
+packages:
+  - partial-semigroup
+  - partial-semigroup-hedgehog
+  - partial-semigroup-test
