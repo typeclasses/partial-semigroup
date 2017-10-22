@@ -2,9 +2,11 @@
 
 [![](https://travis-ci.org/chris-martin/partial-semigroup.svg)](https://travis-ci.org/chris-martin/partial-semigroup)
 
-Hackage:
-[partial-semigroup](https://hackage.haskell.org/package/partial-semigroup),
-[partial-semigroup-test](https://hackage.haskell.org/package/partial-semigroup-test)
+Packages on Hackage:
+
+* [partial-semigroup](https://hackage.haskell.org/package/partial-semigroup)
+* [partial-semigroup-hedgehog](https://hackage.haskell.org/package/partial-semigroup-hedgehog)
+* [partial-semigroup-test](https://hackage.haskell.org/package/partial-semigroup-test)
 
 ## Semigroups (background)
 
@@ -75,6 +77,10 @@ For all `x`, `y`, `z`:
 
 ## Property testing
 
-The `partial-semigroup-test` package provides a
+The `partial-semigroup-hedgehog` package provides a
 [hedgehog](https://hackage.haskell.org/package/hedgehog) property that you can
 use to verify the associativity axiom for `PartialSemigroup` instances.
+
+The `partial-semigroup-test` package aggregates all of the test packages
+(although at the moment there is only one, so this package is rather
+superfluous).
