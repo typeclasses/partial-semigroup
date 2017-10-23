@@ -75,6 +75,46 @@ For all `x`, `y`, `z`:
 
       * `x <>? yz = xy <>? z`.
 
+## Deriving using GHC generics
+
+If a type derives `Generic` and all of its fields have `PartialSemigroup`
+instances, you can get a `PartialSemigroup` for free.
+
+```haskell
+{-# LANGUAGE DeriveGeneric #-}
+
+import Data.PartialSemigroup.Generics
+
+data T
+  = A String (Either String String)
+  | B String
+  deriving (Eq, Generic, Show)
+
+instance PartialSemigroup T where
+  (<>?) = genericPartialSemigroupOp
+```
+
+This gives us an implementation of `<>?` which combines values only if they have
+the same structure.
+
+```haskell
+λ> A "s" (Left "x") <>? A "t" (Left "y")
+Just (A "st" (Left "xy"))
+
+>>> B "x" <>? B "y"
+Just (B "xy")
+```
+
+For values that do *not* have the same structure, `<>?` produces `Nothing`.
+
+```haskell
+>>> A "s" (Left "x") <>? A "t" (Right "y")
+Nothing
+
+>>> A "x" (Left "y") <>? B "z"
+Nothing
+```
+
 ## Property testing
 
 The `partial-semigroup-hedgehog` package provides a

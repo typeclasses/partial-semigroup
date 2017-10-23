@@ -16,6 +16,7 @@ extra-deps:
 
 flags:
   partial-semigroup:
+    enable-doctest: false
     semigroup-in-base: false
 
 nix:

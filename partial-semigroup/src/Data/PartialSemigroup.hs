@@ -51,6 +51,13 @@ import Prelude             (Eq, Num (..), Ord, Read, Show)
 import Data.Functor.Identity (Identity (..))
 #endif
 
+{- $setup
+
+>>> import Data.Function (($))
+>>> import Data.Functor (fmap)
+
+-}
+
 -- The same fixity as <>
 infixr 6 <>?
 
