@@ -87,7 +87,7 @@ test-suite docs
   build-depends: base >=4 && <4.11
 
   if flag(enable-doctest)
-    build-depends: doctest >=0.11 && <0.14
+    build-depends: doctest >=0.11 && <0.15
     cpp-options: -DDOCTEST
 
 test-suite examples
