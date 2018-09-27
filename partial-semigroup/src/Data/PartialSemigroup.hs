@@ -43,8 +43,8 @@ import Data.Either         (Either (..))
 import Data.Function       ((.))
 import Data.List.NonEmpty  (NonEmpty (..), nonEmpty)
 import Data.Maybe          (Maybe (..))
-import Data.Monoid         (Product (..), Sum (..))
-import Data.Semigroup      (Monoid (..), Semigroup (..))
+import Data.Monoid         (Monoid (..), Product (..), Sum (..))
+import Data.Semigroup      (Semigroup (..))
 import Prelude             (Eq, Num (..), Ord, Read, Show)
 
 #ifdef IDENTITY
@@ -366,7 +366,7 @@ instance PartialSemigroup a => Semigroup (Partial a)
     Partial (Just x) <> Partial (Just y) = Partial (x <>? y)
     _ <> _ = Partial Nothing
 
-instance Monoid a => Monoid (Partial a)
+instance (PartialSemigroup a, Monoid a) => Monoid (Partial a)
   where
     mappend (Partial (Just x)) (Partial (Just y)) =
       Partial (Just (mappend x y))
