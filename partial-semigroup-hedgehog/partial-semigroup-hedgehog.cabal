@@ -30,6 +30,6 @@ library
   exposed-modules: Test.PartialSemigroup.Hedgehog
 
   build-depends:
-      base >=4 && <4.11
-    , hedgehog >=0.5 && <0.6
+      base >=4 && <4.12
+    , hedgehog >=0.5 && <0.7
     , partial-semigroup >=0.2 && <0.4
