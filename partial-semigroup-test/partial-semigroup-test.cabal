@@ -35,4 +35,4 @@ library
 
   if flag(enable-hedgehog)
     reexported-modules: Test.PartialSemigroup.Hedgehog
-    build-depends: partial-semigroup-hedgehog >=0.2 && <0.4
+    build-depends: partial-semigroup-hedgehog >=0.2 && <0.5
