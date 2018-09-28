@@ -4,7 +4,6 @@ env:
   global:
     - LC_ALL=en_US.UTF-8
   matrix:
-    - STACK_YAML=stack-lts-2.yaml
     - STACK_YAML=stack-lts-6.yaml
     - STACK_YAML=stack-lts-9.yaml
     - STACK_YAML=stack-lts-10.yaml
