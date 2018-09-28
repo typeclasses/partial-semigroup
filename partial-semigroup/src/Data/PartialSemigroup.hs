@@ -366,14 +366,6 @@ instance PartialSemigroup a => Semigroup (Partial a)
     Partial (Just x) <> Partial (Just y) = Partial (x <>? y)
     _ <> _ = Partial Nothing
 
-instance Monoid a => Monoid (Partial a)
-  where
-    mappend (Partial (Just x)) (Partial (Just y)) =
-      Partial (Just (mappend x y))
-    mappend _ _ = Partial Nothing
-
-    mempty = Partial (Just mempty)
-
 --------------------------------------------------------------------------------
 
 {- $total
