@@ -1,1 +1,2 @@
-packages: */*.cabal
+packages: partial-semigroup/
+        , partial-semigroup-hedgehog/

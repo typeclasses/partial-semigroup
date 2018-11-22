@@ -1,12 +1,8 @@
-# ghc 7.10.3
-# base 4.8.2.0
-
 resolver: lts-6.35
 
 packages:
   - partial-semigroup
   - partial-semigroup-hedgehog
-  - partial-semigroup-test
 
 extra-deps:
   - hedgehog-0.5

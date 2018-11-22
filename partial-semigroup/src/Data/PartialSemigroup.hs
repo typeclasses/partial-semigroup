@@ -37,19 +37,16 @@ module Data.PartialSemigroup
 
   ) where
 
-import Control.Applicative (ZipList (..), (<$>), (<*>))
-import Control.Monad       ((>>=))
-import Data.Either         (Either (..))
-import Data.Function       ((.))
-import Data.List.NonEmpty  (NonEmpty (..), nonEmpty)
-import Data.Maybe          (Maybe (..))
-import Data.Monoid         (Monoid (..), Product (..), Sum (..))
-import Data.Semigroup      (Semigroup (..))
-import Prelude             (Eq, Num (..), Ord, Read, Show)
-
-#ifdef IDENTITY
+import Control.Applicative   (ZipList (..), (<$>), (<*>))
+import Control.Monad         ((>>=))
+import Data.Either           (Either (..))
+import Data.Function         ((.))
 import Data.Functor.Identity (Identity (..))
-#endif
+import Data.List.NonEmpty    (NonEmpty (..), nonEmpty)
+import Data.Maybe            (Maybe (..))
+import Data.Monoid           (Monoid (..), Product (..), Sum (..))
+import Data.Semigroup        (Semigroup (..))
+import Prelude               (Eq, Num (..), Ord, Read, Show)
 
 {- $setup
 
@@ -131,11 +128,9 @@ instance Num a => PartialSemigroup (Product a)
 
 --------------------------------------------------------------------------------
 
-#ifdef IDENTITY
 instance PartialSemigroup a => PartialSemigroup (Identity a)
   where
     Identity x <>? Identity y = Identity <$> (x <>? y)
-#endif
 
 --------------------------------------------------------------------------------
 

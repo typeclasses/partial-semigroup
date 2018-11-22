@@ -1,11 +1,19 @@
 name: partial-semigroup
-version: 0.4.0.1
+version: 0.5.0.0
 synopsis: A partial binary associative operator
 category: Algebra
 
 description:
-  A partial semigroup is like a semigroup, but the operator is partial. We
-  represent this in Haskell as a total function @(<>?) :: a -> a -> Maybe a@.
+  A partial semigroup is like a semigroup, but the operator
+  is partial. We represent this in Haskell as a total function
+  @(<>?) :: a -> a -> Maybe a@.
+  .
+  The
+  <https://hackage.haskell.org/package/partial-semigroup-hedgehog partial-semigroup-hedgehog>
+  companion package provides support for checking the partial
+  semigroup associativity axiom using the
+  <https://hackage.haskell.org/package/hedgehog hedgehog>
+  package.
 
 homepage:    https://github.com/chris-martin/partial-semigroup
 bug-reports: https://github.com/chris-martin/partial-semigroup/issues
@@ -19,6 +27,13 @@ license-file: license.txt
 build-type: Simple
 cabal-version: >= 1.10
 
+tested-with:
+    GHC == 7.10.3
+  , GHC == 8.0.2
+  , GHC == 8.2.2
+  , GHC == 8.4.3
+  , GHC == 8.6.1
+
 source-repository head
   type: git
   location: https://github.com/chris-martin/partial-semigroup
@@ -30,20 +45,6 @@ flag semigroup-in-base
     `Data.List.NonEmpty` modules.
     .
     Disabling this flag adds a dependency on the `semigroups` package.
-
-flag identity-in-base
-  default: True
-  description:
-    Require a version of `base` that provides the `Data.Functor.Identity`
-    module.
-
-flag generics-in-base
-  default: True
-  description:
-    Require a version of `base` that provides the `GHC.Generics` module.
-    .
-    Disabling this flag removes the `Data.PartialSemigroup.Generics` module
-    from the package.
 
 flag enable-hedgehog
   default: True
@@ -60,19 +61,18 @@ flag enable-doctest
 library
   ghc-options: -Wall
   default-language: Haskell2010
-  build-depends: base >=4 && <4.13
+  build-depends: base >=4.8 && <4.13
   hs-source-dirs: src
 
-  exposed-modules: Data.PartialSemigroup
+  exposed-modules:
+      Data.PartialSemigroup
+    , Data.PartialSemigroup.Generics
 
-  if flag(generics-in-base)
-    build-depends: base >=4.6
-    exposed-modules: Data.PartialSemigroup.Generics
-
-  if flag(identity-in-base)
-    build-depends: base >=4.8
-    cpp-options: -DIDENTITY
-
+  -- base version 4.9 introduced the Data.Semigroup and
+  -- Data.List.NonEmpty modules. To build with older
+  -- versions of base, disable the semigroup-in-base flag.
+  -- In that case, Data.Semigroup will come from the
+  -- semigroups package instead.
   if flag(semigroup-in-base)
     build-depends: base >=4.9
   else
@@ -84,11 +84,21 @@ test-suite docs
   default-language: Haskell2010
   hs-source-dirs: test
   main-is: docs.hs
-  build-depends: base >=4 && <4.13
+  build-depends: base >=4 && <5
 
   if flag(enable-doctest)
-    build-depends: doctest >=0.11 && <0.17
+    build-depends: base >=4.9, doctest >=0.11 && <0.17
     cpp-options: -DDOCTEST
+
+  -- base version 4.9 introduced the Data.Semigroup and
+  -- Data.List.NonEmpty modules. To build with older
+  -- versions of base, disable the semigroup-in-base flag.
+  -- In that case, Data.Semigroup will come from the
+  -- semigroups package instead.
+  if flag(semigroup-in-base)
+    build-depends: base >=4.9
+  else
+    build-depends: semigroups >=0.8.4 && <1
 
 test-suite examples
   type: exitcode-stdio-1.0
@@ -96,15 +106,17 @@ test-suite examples
   default-language: Haskell2010
   hs-source-dirs: test
   main-is: examples.hs
-
-  build-depends:
-      base >=4 && <4.13
-    , partial-semigroup
+  build-depends: base >=4 && <4.13, partial-semigroup
 
   if flag(enable-hedgehog)
     build-depends: hedgehog >=0.5 && <0.7
     cpp-options: -DHEDGEHOG
 
+  -- base version 4.9 introduced the Data.Semigroup and
+  -- Data.List.NonEmpty modules. To build with older
+  -- versions of base, disable the semigroup-in-base flag.
+  -- In that case, Data.Semigroup will come from the
+  -- semigroups package instead.
   if flag(semigroup-in-base)
     build-depends: base >=4.9
   else
@@ -116,16 +128,21 @@ test-suite properties
   default-language: Haskell2010
   hs-source-dirs: test
   main-is: properties.hs
-  build-depends:
-      base >=4 && <4.13
-    , partial-semigroup
+  build-depends: base >=4 && <5, partial-semigroup
 
   if flag(enable-hedgehog)
+    build-depends: hedgehog >=0.5 && <0.7
     cpp-options: -DHEDGEHOG
+
+  if flag(enable-hedgehog)
     hs-source-dirs: src-hedgehog
     other-modules: Test.PartialSemigroup.Hedgehog
-    build-depends: hedgehog >=0.5 && <0.7
 
+  -- base version 4.9 introduced the Data.Semigroup and
+  -- Data.List.NonEmpty modules. To build with older
+  -- versions of base, disable the semigroup-in-base flag.
+  -- In that case, Data.Semigroup will come from the
+  -- semigroups package instead.
   if flag(semigroup-in-base)
     build-depends: base >=4.9
   else
@@ -137,18 +154,22 @@ test-suite generics
   default-language: Haskell2010
   hs-source-dirs: test
   main-is: generics.hs
-  build-depends:
-      base >=4 && <4.13
-    , partial-semigroup
+  build-depends: base >=4 && <5, partial-semigroup
 
-  if flag(generics-in-base)
-    if flag(enable-hedgehog)
-      cpp-options: -DHEDGEHOG
-      hs-source-dirs: src-hedgehog
-      other-modules: Test.PartialSemigroup.Hedgehog
-      build-depends: base >=4.6, hedgehog >=0.5 && <0.7
+  if flag(enable-hedgehog)
+    build-depends: hedgehog >=0.5 && <0.7
+    cpp-options: -DHEDGEHOG
 
-    if flag(semigroup-in-base)
-      build-depends: base >=4.9
-    else
-      build-depends: semigroups >=0.8.4 && <1
+  if flag(enable-hedgehog)
+    hs-source-dirs: src-hedgehog
+    other-modules: Test.PartialSemigroup.Hedgehog
+
+  -- base version 4.9 introduced the Data.Semigroup and
+  -- Data.List.NonEmpty modules. To build with older
+  -- versions of base, disable the semigroup-in-base flag.
+  -- In that case, Data.Semigroup will come from the
+  -- semigroups package instead.
+  if flag(semigroup-in-base)
+    build-depends: base >=4.9
+  else
+    build-depends: semigroups >=0.8.4 && <1
