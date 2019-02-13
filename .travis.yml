@@ -111,7 +111,7 @@ script:
   # test that source-distributions can be generated
   - (cd "partial-semigroup" && cabal sdist)
   - (cd "partial-semigroup-hedgehog" && cabal sdist)
-  - mv "partial-semigroup"/dist/partial-semigroup-*.tar.gz "partial-semigroup-hedgehog"/dist/partial-semigroup-hedgehog-*.tar.gz ${DISTDIR}/
+  - mv dist-newstyle/sdist/*.tar.gz ${DISTDIR}/
   - cd ${DISTDIR} || false
   - find . -maxdepth 1 -name '*.tar.gz' -exec tar -xvf '{}' \;
   - "printf 'packages: partial-semigroup-*/*.cabal partial-semigroup-hedgehog-*/*.cabal\\n' > cabal.project"
