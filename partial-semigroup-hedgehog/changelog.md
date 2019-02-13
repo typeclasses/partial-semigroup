@@ -1,3 +1,8 @@
+0.6.0.0 - 2019 Feb 13
+
+  * `assoc` no longer skips when `(<>?)` returns `Nothing`; that is now
+    considered a passed test.
+
 0.5.0.0 - 2018 Nov 21
 
   * Drop support for GHC 7.8 and below

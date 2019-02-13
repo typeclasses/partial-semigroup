@@ -26,10 +26,9 @@ assoc gen = property $ do
   y <- forAll gen
   z <- forAll gen
 
-  xy <- liftMaybe (x <>? y)
-  yz <- liftMaybe (y <>? z)
+  sequence_ $
+    do
+      xy <- x <>? y
+      yz <- y <>? z
 
-  x <>? yz === xy <>? z
-
-liftMaybe :: Alternative f => Maybe a -> f a
-liftMaybe = maybe empty pure
+      return (x <>? yz === xy <>? z)

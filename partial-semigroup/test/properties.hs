@@ -55,32 +55,26 @@ prop_list_total_assoc =
 
 prop_zipList_assoc :: Property
 prop_zipList_assoc =
-  withDiscards 1000 $
   assoc (ZipList <$> Gen.list (Range.linear 0 3) genEither)
 
 prop_either_assoc :: Property
 prop_either_assoc =
-  withDiscards 1000 $
   assoc genEither
 
 prop_tuple2_assoc :: Property
 prop_tuple2_assoc =
-  withDiscards 1000 $
   assoc ((,) <$> genStr <*> genEither)
 
 prop_tuple3_assoc :: Property
 prop_tuple3_assoc =
-  withDiscards 1000 $
   assoc ((,,) <$> genStr <*> genEither <*> genSum)
 
 prop_appendLeft_assoc :: Property
 prop_appendLeft_assoc =
-  withDiscards 1000 $
   assoc (AppendLeft <$> genEither)
 
 prop_appendRight_assoc :: Property
 prop_appendRight_assoc =
-  withDiscards 1000 $
   assoc (AppendRight <$> genEither)
 
 
