@@ -34,6 +34,9 @@ tested-with:
   , GHC == 8.4.3
   , GHC == 8.6.1
 
+extra-source-files:
+    changelog.md
+
 source-repository head
   type: git
   location: https://github.com/chris-martin/partial-semigroup
