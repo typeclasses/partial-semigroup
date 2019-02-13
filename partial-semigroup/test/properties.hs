@@ -4,7 +4,10 @@
 #ifdef HEDGEHOG
 
 -- partial-semigroup
-import Data.PartialSemigroup (AppendLeft (..), AppendRight (..), Total (..))
+import Data.PartialSemigroup
+    ( AppendLeft (..), AppendRight (..), Total (..)
+    , One (..), AtMostOne (..)
+    )
 
 -- partial-semigroup-test
 import Test.PartialSemigroup.Hedgehog (assoc)
@@ -77,6 +80,14 @@ prop_appendRight_assoc :: Property
 prop_appendRight_assoc =
   assoc (AppendRight <$> genEither)
 
+prop_one_assoc :: Property
+prop_one_assoc =
+  assoc (One <$> genMaybe)
+
+prop_atMostOne_assoc :: Property
+prop_atMostOne_assoc =
+  assoc (AtMostOne <$> genMaybe)
+
 
 --------------------------------------------------------------------------------
 --  Generators
@@ -89,6 +100,10 @@ genStr =
 genSum :: Gen (Sum Integer)
 genSum =
   Sum <$> Gen.integral (Range.linear 0 10)
+
+genMaybe  :: Gen (Maybe String)
+genMaybe =
+  Gen.maybe genStr
 
 genEither :: Gen (Either String (Sum Integer))
 genEither =

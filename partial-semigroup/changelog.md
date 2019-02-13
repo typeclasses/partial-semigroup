@@ -1,3 +1,7 @@
+0.5.1.0 - 2019 Feb 13
+
+  * Add `One` and `AtMostOne`
+
 0.5.0.0 - 2018 Nov 21
 
   * Drop support for GHC 7.8 and below

@@ -35,6 +35,11 @@ module Data.PartialSemigroup
   -- $partial
   , Partial (..)
 
+  -- * Refusing to combine
+  -- $refusing
+  , One (..)
+  , AtMostOne (..)
+
   ) where
 
 import Control.Applicative   (ZipList (..), (<$>), (<*>))
@@ -467,4 +472,34 @@ instance PartialSemigroup b => PartialSemigroup (AppendRight a b)
   where
     AppendRight (Right x) <>? AppendRight (Right y) =
       AppendRight . Right <$> (x <>? y)
+    _ <>? _ = Nothing
+
+--------------------------------------------------------------------------------
+
+{- $refusing
+
+These are 'PartialSemigroup' instances that don't really combine their values
+at all; whenever more than one thing is present, '<>?' fails.
+
+-}
+
+{- | A partial semigroup operation which always fails. -}
+
+newtype One a = One { theOne :: a }
+  deriving (Eq, Ord, Read, Show)
+
+instance PartialSemigroup (One a)
+  where
+    _ <>? _ = Nothing
+
+{- | A wrapper for 'Maybe' whose partial semigroup operation fails when two
+'Just's are combined. -}
+
+newtype AtMostOne a = AtMostOne { theOneMaybe :: Maybe a }
+  deriving (Eq, Ord, Read, Show)
+
+instance PartialSemigroup (AtMostOne a)
+  where
+    AtMostOne Nothing <>? x = Just x
+    x <>? AtMostOne Nothing = Just x
     _ <>? _ = Nothing
