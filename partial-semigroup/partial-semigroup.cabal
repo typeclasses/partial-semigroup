@@ -1,5 +1,5 @@
 name: partial-semigroup
-version: 0.5.1.0
+version: 0.5.1.1
 synopsis: A partial binary associative operator
 category: Algebra
 
@@ -31,8 +31,8 @@ tested-with:
     GHC == 7.10.3
   , GHC == 8.0.2
   , GHC == 8.2.2
-  , GHC == 8.4.3
-  , GHC == 8.6.1
+  , GHC == 8.4.4
+  , GHC == 8.6.3
 
 extra-source-files:
     changelog.md
@@ -112,7 +112,7 @@ test-suite examples
   build-depends: base >=4 && <4.13, partial-semigroup
 
   if flag(enable-hedgehog)
-    build-depends: hedgehog >=0.5 && <0.7
+    build-depends: hedgehog >=0.5 && <1.1
     cpp-options: -DHEDGEHOG
 
   -- base version 4.9 introduced the Data.Semigroup and
@@ -134,7 +134,7 @@ test-suite properties
   build-depends: base >=4 && <5, partial-semigroup
 
   if flag(enable-hedgehog)
-    build-depends: hedgehog >=0.5 && <0.7
+    build-depends: hedgehog >=0.5 && <1.1
     cpp-options: -DHEDGEHOG
 
   if flag(enable-hedgehog)
@@ -160,7 +160,7 @@ test-suite generics
   build-depends: base >=4 && <5, partial-semigroup
 
   if flag(enable-hedgehog)
-    build-depends: hedgehog >=0.5 && <0.7
+    build-depends: hedgehog >=0.5 && <1.1
     cpp-options: -DHEDGEHOG
 
   if flag(enable-hedgehog)

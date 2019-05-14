@@ -1,3 +1,7 @@
+0.5.1.1 - 2019 May 14
+
+  * Bump upper version bound to allow building with Hedgehog 1.0
+
 0.5.1.0 - 2019 Feb 13
 
   * Add `One` and `AtMostOne`

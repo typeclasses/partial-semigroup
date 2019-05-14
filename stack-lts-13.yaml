@@ -1,5 +1,8 @@
-resolver: lts-13.7
+resolver: lts-13.17
 
 packages:
   - partial-semigroup
   - partial-semigroup-hedgehog
+
+extra-deps:
+  - hedgehog-1.0
