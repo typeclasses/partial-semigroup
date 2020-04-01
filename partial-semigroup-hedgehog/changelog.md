@@ -1,3 +1,7 @@
+0.6.0.4 - 2020 Apr 1
+
+  * Support GHC 8.8
+
 0.6.0.1 - 2019 May 14
 
   * Bump upper version bound to allow building with Hedgehog 1.0

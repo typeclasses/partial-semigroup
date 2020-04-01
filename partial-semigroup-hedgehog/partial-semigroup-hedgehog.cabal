@@ -1,5 +1,5 @@
 name: partial-semigroup-hedgehog
-version: 0.6.0.1
+version: 0.6.0.4
 synopsis: Property testing for partial semigroups using Hedgehog
 category: Algebra, Testing
 
