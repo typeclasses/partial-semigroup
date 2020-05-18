@@ -1,3 +1,7 @@
+0.6.0.6 - 2020 May 20
+
+  * Support GHC 8.10
+
 0.6.0.4 - 2020 Apr 1
 
   * Support GHC 8.8

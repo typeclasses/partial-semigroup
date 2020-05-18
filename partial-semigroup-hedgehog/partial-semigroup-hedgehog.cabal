@@ -1,5 +1,5 @@
 name: partial-semigroup-hedgehog
-version: 0.6.0.4
+version: 0.6.0.6
 synopsis: Property testing for partial semigroups using Hedgehog
 category: Algebra, Testing
 
@@ -30,6 +30,7 @@ tested-with:
   , GHC == 8.4.4
   , GHC == 8.6.3
   , GHC == 8.8.1
+  , GHC == 8.10.1
 
 extra-source-files:
     changelog.md
@@ -45,6 +46,6 @@ library
   exposed-modules: Test.PartialSemigroup.Hedgehog
 
   build-depends:
-      base >=4.8 && <4.14
+      base >=4.8 && <4.15
     , hedgehog >=0.5 && <1.1
     , partial-semigroup >=0.5 && <0.6
