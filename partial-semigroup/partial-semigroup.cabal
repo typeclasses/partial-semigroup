@@ -1,5 +1,5 @@
 name: partial-semigroup
-version: 0.5.1.6
+version: 0.5.1.8
 synopsis: A partial binary associative operator
 category: Algebra
 
@@ -92,7 +92,7 @@ test-suite docs
   build-depends: base >=4 && <4.15
 
   if flag(enable-doctest)
-    build-depends: base >=4.9, doctest >=0.11 && <0.17
+    build-depends: base >=4.9, doctest >=0.11 && <0.18
     cpp-options: -DDOCTEST
 
   -- base version 4.9 introduced the Data.Semigroup and

@@ -1,3 +1,7 @@
+0.5.1.8 - 2020 Jun 2
+
+  * Support `doctest-0.17`
+
 0.5.1.6 - 2020 May 20
 
   * Support GHC 8.10
