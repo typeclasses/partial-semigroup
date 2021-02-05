@@ -1,0 +1,31 @@
+on: [push]
+
+name: CI for 'partial-semigroup' and related libraries
+
+jobs:
+  build:
+    name: Build and test the packages
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ghc:
+          - '7.10.3'
+          - '8.0.2'
+          - '8.2.2'
+          - '8.4.4'
+          - '8.6.3'
+          - '8.8.1'
+          - '8.10.1'
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: haskell/actions/setup@v1
+        with:
+          ghc-version: ${{ matrix.ghc }}
+      - name: Build 'partial-semigroup'
+        run: cabal build partial-semigroup
+      - name: Test 'partial-semigroup'
+        run: cabal test partial-semigroup
+      - name: Build 'partial-semigroup-hedgehog'
+        run: cabal build partial-semigroup-hedgehog
