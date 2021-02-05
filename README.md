@@ -1,7 +1,5 @@
 # partial-semigroup
 
-[![](https://travis-ci.org/chris-martin/partial-semigroup.svg)](https://travis-ci.org/chris-martin/partial-semigroup)
-
 Packages on Hackage:
 
 * [partial-semigroup](https://hackage.haskell.org/package/partial-semigroup)
