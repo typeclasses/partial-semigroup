@@ -1,5 +1,0 @@
-resolver: lts-15.2
-
-packages:
-  - partial-semigroup
-  - partial-semigroup-hedgehog
