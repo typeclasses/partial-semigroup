@@ -1,3 +1,7 @@
+Unreleased
+
+  * Drop support for GHC 7.10
+
 0.5.1.8 - 2020 Jun 2
 
   * Support `doctest-0.17`

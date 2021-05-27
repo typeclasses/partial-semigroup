@@ -24,8 +24,7 @@ build-type: Simple
 cabal-version: >= 1.10
 
 tested-with:
-    GHC == 7.10.3
-  , GHC == 8.0.2
+    GHC == 8.0.2
   , GHC == 8.2.2
   , GHC == 8.4.4
   , GHC == 8.6.3
@@ -46,6 +45,6 @@ library
   exposed-modules: Test.PartialSemigroup.Hedgehog
 
   build-depends:
-      base >=4.8 && <4.15
+      base >=4.9 && <4.15
     , hedgehog >=0.5 && <1.1
     , partial-semigroup >=0.5 && <0.6
