@@ -10,6 +10,7 @@ main =
       "8.4.4"  -> callProcess "cabal" ["test", "all"]
       "8.6.3"  -> callProcess "cabal" ["test", "all"]
       "8.8.1"  -> callProcess "cabal" ["test", "all"]
-      "8.10.1" -> callProcess "cabal" ["test", "all"
+      "8.10.1" -> callProcess "cabal" ["test", "all"]
+      "9.0.1"  -> callProcess "cabal" ["test", "all"
                   , "--constraint=hedgehog == 1.0.5"
                   ]

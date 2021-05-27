@@ -1,6 +1,7 @@
 Unreleased
 
   * Drop support for GHC 7.10
+  * Add support for GHC 9.0
 
 0.6.0.6 - 2020 May 20
 
