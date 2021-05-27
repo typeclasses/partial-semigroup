@@ -1,4 +1,4 @@
-Unreleased
+0.5.1.10 - 2021 May 27
 
   * Drop support for GHC 7.10
 
