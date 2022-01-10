@@ -1,0 +1,16 @@
+cradle:
+  cabal:
+    - path: "./partial-semigroup/src"
+      component: "lib:partial-semigroup"
+    - path: "./partial-semigroup/src-hedgehog"
+      component: "test:properties"
+    - path: "./partial-semigroup/test/properties.hs"
+      component: "test:properties"
+    - path: "./partial-semigroup/test/docs.hs"
+      component: "test:docs"
+    - path: "./partial-semigroup/test/generics.hs"
+      component: "test:generics"
+    - path: "./partial-semigroup/test/examples.hs"
+      component: "test:examples"
+    - path: "./partial-semigroup-hedgehog/src"
+      component: "lib:partial-semigroup-hedgehog"
