@@ -6,7 +6,7 @@ jobs:
 
   build:
     name: Test all the packages
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
