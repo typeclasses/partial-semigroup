@@ -1,3 +1,8 @@
+0.6.0.12 - 2022 Mar 21
+
+  * Raise minimum bound for `base` to 4.13 (GHC 8.8)
+  * Raise supported `hedgehog` range to 1.0, 1.1
+
 0.6.0.10 - 2022 Jan 10
 
   * Support GHC 9.2

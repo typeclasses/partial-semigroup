@@ -11,9 +11,6 @@ import Data.PartialSemigroup (PartialSemigroup (..))
 -- hedgehog
 import Hedgehog (Gen, Property, forAll, property, (===))
 
--- base
-import Control.Applicative (Alternative, empty)
-
 {- | The partial semigroup associativity axiom:
 
 For all @x@, @y@, @z@: If @x '<>?' y = 'Just' xy@ and @y '<>?' z = 'Just' yz@,

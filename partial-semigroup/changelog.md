@@ -1,3 +1,10 @@
+0.6.0.0 - 2022 Mar 21
+
+  * Raise minimum bound for `base` to 4.13 (GHC 8.8)
+  * Raise supported `hedgehog` range to 1.0, 1.1
+  * Remove all cabal flags
+  * Remove doctest test-suite
+
 0.5.1.14 - 2022 Jan 10
 
   * Support GHC 9.2

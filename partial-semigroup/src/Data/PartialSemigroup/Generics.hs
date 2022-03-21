@@ -1,7 +1,3 @@
-{-# LANGUAGE FlexibleContexts  #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE TypeOperators     #-}
-
 {- | If a type derives 'Generic' and all of its fields have 'PartialSemigroup'
 instances, you can get a 'PartialSemigroup' for free using
 'genericPartialSemigroupOp'.

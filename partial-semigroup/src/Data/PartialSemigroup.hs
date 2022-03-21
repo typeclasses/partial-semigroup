@@ -1,6 +1,3 @@
-{-# LANGUAGE CPP               #-}
-{-# LANGUAGE NoImplicitPrelude #-}
-
 {- | A /semigroup/ ('Semigroup') is a set with a binary associative operation
 (@<>@). This module defines a /partial semigroup/ ('PartialSemigroup'), a
 semigroup for which @<>@ is not required to be defined over all inputs. -}
@@ -49,7 +46,7 @@ import Data.Function         ((.))
 import Data.Functor.Identity (Identity (..))
 import Data.List.NonEmpty    (NonEmpty (..), nonEmpty)
 import Data.Maybe            (Maybe (..))
-import Data.Monoid           (Monoid (..), Product (..), Sum (..))
+import Data.Monoid           (Product (..), Sum (..))
 import Data.Semigroup        (Semigroup (..))
 import Prelude               (Eq, Num (..), Ord, Read, Show)
 

@@ -1,9 +1,0 @@
-packages: partial-semigroup/
-        , partial-semigroup-hedgehog/
-
--- Temporary, waiting on https://github.com/hedgehogqa/haskell-hedgehog/issues/440
-source-repository-package
-    type: git
-    location: https://github.com/hedgehogqa/haskell-hedgehog.git
-    tag: 21a5131d6cb2418f8a032759a69003dcb8cfdb30
-    subdir: hedgehog

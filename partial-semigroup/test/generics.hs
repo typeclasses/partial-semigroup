@@ -1,8 +1,4 @@
-{-# LANGUAGE CPP             #-}
-{-# LANGUAGE DeriveGeneric   #-}
-{-# LANGUAGE TemplateHaskell #-}
-
-#ifdef HEDGEHOG
+{-# LANGUAGE DeriveGeneric #-}
 
 -- partial-semigroup
 import Data.PartialSemigroup          (PartialSemigroup (..))
@@ -108,10 +104,3 @@ prop_example_4 = withTests 1 $ property $
     y = B "z"
   in
     x <>? y === Nothing
-
-#else
-
-main :: IO ()
-main = putStrLn "Tests using hedgehog are disabled."
-
-#endif

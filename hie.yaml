@@ -6,8 +6,6 @@ cradle:
       component: "test:properties"
     - path: "./partial-semigroup/test/properties.hs"
       component: "test:properties"
-    - path: "./partial-semigroup/test/docs.hs"
-      component: "test:docs"
     - path: "./partial-semigroup/test/generics.hs"
       component: "test:generics"
     - path: "./partial-semigroup/test/examples.hs"

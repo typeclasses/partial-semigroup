@@ -1,19 +1,12 @@
-{-# LANGUAGE CPP             #-}
-{-# LANGUAGE TemplateHaskell #-}
-
-#ifdef HEDGEHOG
-
 -- partial-semigroup
-import Data.PartialSemigroup
-    ( AppendLeft (..), AppendRight (..), Total (..)
-    , One (..), AtMostOne (..)
-    )
+import Data.PartialSemigroup (AppendLeft (..), AppendRight (..), AtMostOne (..),
+                              One (..), Total (..))
 
 -- partial-semigroup-test
 import Test.PartialSemigroup.Hedgehog (assoc)
 
 -- hedgehog
-import           Hedgehog       (Gen, Property, withDiscards)
+import           Hedgehog       (Gen, Property)
 import qualified Hedgehog
 import qualified Hedgehog.Gen   as Gen
 import qualified Hedgehog.Range as Range
@@ -111,10 +104,3 @@ genEither =
     [ Left <$> genStr
     , Right <$> genSum
     ]
-
-#else
-
-main :: IO ()
-main = putStrLn "Tests using hedgehog are disabled."
-
-#endif
