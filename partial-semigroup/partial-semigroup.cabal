@@ -47,6 +47,7 @@ common test
     default-extensions: TemplateHaskell
     build-depends: partial-semigroup
     build-depends: hedgehog ^>= 1.0.1 || ^>= 1.1 || ^>= 1.2
+
 library
     import: base
     hs-source-dirs: src
