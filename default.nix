@@ -11,7 +11,6 @@ combineOverrides = old:
 
 sourceOverrides = haskell.lib.packageSourceOverrides {
     partial-semigroup = ./partial-semigroup;
-    partial-semigroup-hedgehog = ./partial-semigroup-hedgehog;
 };
 
 depOverrides = new: old: {
@@ -38,10 +37,7 @@ in
 
 symlinkJoin {
     name = "partial-semigroup";
-    paths = concatMap (x: [
-        x.partial-semigroup
-        x.partial-semigroup-hedgehog
-    ]) (attrValues ghc);
+    paths = concatMap (x: [x.partial-semigroup]) (attrValues ghc);
 } // {
     inherit ghc;
     pkgs = nixos-22-11;
