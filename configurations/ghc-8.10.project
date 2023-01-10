@@ -1,4 +1,0 @@
-packages: partial-semigroup, partial-semigroup-hedgehog
-
-constraints:
-    base == 4.14.*

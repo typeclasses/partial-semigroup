@@ -1,3 +1,7 @@
+0.6.0.1 - 2022 Jan 10
+
+  * Support GHC 9.4
+
 0.6.0.0 - 2022 Mar 21
 
   * Raise minimum bound for `base` to 4.13 (GHC 8.8)

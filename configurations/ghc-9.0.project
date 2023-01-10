@@ -1,5 +1,0 @@
-packages: partial-semigroup, partial-semigroup-hedgehog
-
-constraints:
-    base == 4.15.*
-  , hedgehog == 1.1.*

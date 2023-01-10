@@ -1,10 +1,12 @@
-# partial-semigroup
+A partial semigroup is like a semigroup, but the operator is partial.
+We represent this in Haskell as a total function:
 
-Packages on Hackage:
+```haskell
+(<>?) :: a -> a -> Maybe a
+```
 
-* [partial-semigroup](https://hackage.haskell.org/package/partial-semigroup)
-* [partial-semigroup-hedgehog](https://hackage.haskell.org/package/partial-semigroup-hedgehog)
-* [partial-semigroup-test](https://hackage.haskell.org/package/partial-semigroup-test)
+The [partial-semigroup-hedgehog] companion package provides support for checking
+the partial semigroup associativity axiom using the [hedgehog] package.
 
 ## Semigroups (background)
 
@@ -16,9 +18,8 @@ something like this:
 class Semigroup a where (<>) :: a -> a -> a
 ```
 
-This was once provided by the
-[semigroups](https://hackage.haskell.org/package/semigroups) package, but is
-now in the Haskell standard library as of `base 4.9.0.0` in 2016.
+This was once provided by the [semigroups] package, but is now in the Haskell
+standard library as of `base 4.9.0.0` in 2016.
 
 ### The semigroup associativity axiom
 
@@ -113,12 +114,8 @@ Nothing
 Nothing
 ```
 
-## Property testing
+  [partial-semigroup-hedgehog]: https://hackage.haskell.org/package/partial-semigroup-hedgehog
 
-The `partial-semigroup-hedgehog` package provides a
-[hedgehog](https://hackage.haskell.org/package/hedgehog) property that you can
-use to verify the associativity axiom for `PartialSemigroup` instances.
+  [hedgehog]: https://hackage.haskell.org/package/hedgehog
 
-The `partial-semigroup-test` package aggregates all of the test packages
-(although at the moment there is only one, so this package is rather
-superfluous).
+  [semigroups]: https://hackage.haskell.org/package/semigroups
