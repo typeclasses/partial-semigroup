@@ -1,2 +1,3 @@
-To test, run `nix-build`. This will build and test the package with all
-supported GHC and dependency versions.
+To build and test with all supported compiler versions:
+
+    nix build .#testConfigurations.all --no-link

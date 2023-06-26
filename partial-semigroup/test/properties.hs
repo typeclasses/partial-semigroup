@@ -1,24 +1,22 @@
--- partial-semigroup
-import Data.PartialSemigroup (AppendLeft (..), AppendRight (..), AtMostOne (..),
-                              One (..), Total (..))
-
--- partial-semigroup-test
+import Control.Applicative (ZipList (..))
+import Control.Monad (unless)
+import Data.Foldable (for_)
+import Data.Functor.Identity (Identity (..))
+import Data.Monoid (Sum (..))
+import Data.PartialSemigroup
+  ( AppendLeft (..),
+    AppendRight (..),
+    AtMostOne (..),
+    One (..),
+    Total (..),
+  )
+import Hedgehog (Gen, Property)
+import Hedgehog qualified
+import Hedgehog.Gen qualified as Gen
+import Hedgehog.Range qualified as Range
+import System.Exit qualified as Exit
+import System.IO qualified as IO
 import Test.PartialSemigroup.Hedgehog (assoc)
-
--- hedgehog
-import           Hedgehog       (Gen, Property)
-import qualified Hedgehog
-import qualified Hedgehog.Gen   as Gen
-import qualified Hedgehog.Range as Range
-
--- base
-import           Control.Applicative   (ZipList (..))
-import           Control.Monad         (unless)
-import           Data.Foldable         (for_)
-import           Data.Functor.Identity (Identity (..))
-import           Data.Monoid           (Sum (..))
-import qualified System.Exit           as Exit
-import qualified System.IO             as IO
 
 main :: IO ()
 main = do
@@ -27,7 +25,6 @@ main = do
     IO.hSetBuffering h IO.LineBuffering
   success <- Hedgehog.checkParallel $$(Hedgehog.discover)
   unless success Exit.exitFailure
-
 
 --------------------------------------------------------------------------------
 --  Properties
@@ -81,7 +78,6 @@ prop_atMostOne_assoc :: Property
 prop_atMostOne_assoc =
   assoc (AtMostOne <$> genMaybe)
 
-
 --------------------------------------------------------------------------------
 --  Generators
 --------------------------------------------------------------------------------
@@ -94,13 +90,13 @@ genSum :: Gen (Sum Integer)
 genSum =
   Sum <$> Gen.integral (Range.linear 0 10)
 
-genMaybe  :: Gen (Maybe String)
+genMaybe :: Gen (Maybe String)
 genMaybe =
   Gen.maybe genStr
 
 genEither :: Gen (Either String (Sum Integer))
 genEither =
   Gen.choice
-    [ Left <$> genStr
-    , Right <$> genSum
+    [ Left <$> genStr,
+      Right <$> genSum
     ]
