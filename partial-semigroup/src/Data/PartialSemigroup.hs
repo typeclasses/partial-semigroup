@@ -6,6 +6,10 @@ module Data.PartialSemigroup
   ( -- * Partial semigroup
     PartialSemigroup (..),
 
+    -- * Partial monoid
+    PartialMonoid (..),
+    pmappend,
+
     -- * Either
     -- $either
     AppendLeft (..),
@@ -39,13 +43,13 @@ module Data.PartialSemigroup
 where
 
 import Control.Applicative (ZipList (..), (<$>), (<*>))
-import Control.Monad ((>>=))
+import Control.Monad (foldM, (>>=))
 import Data.Either (Either (..))
-import Data.Function ((.))
+import Data.Function (($), (.))
 import Data.Functor.Identity (Identity (..))
 import Data.List.NonEmpty (NonEmpty (..), nonEmpty)
-import Data.Maybe (Maybe (..))
-import Data.Monoid (Product (..), Sum (..))
+import Data.Maybe (fromJust, Maybe (..))
+import Data.Monoid (Monoid (..), Product (..), Sum (..))
 import Data.Semigroup (Semigroup (..))
 import Prelude (Eq, Num (..), Ord, Read, Show)
 
@@ -101,26 +105,91 @@ class PartialSemigroup a where
 
 --------------------------------------------------------------------------------
 
+-- | A 'PartialMonoid' is like a 'Monoid', but with an operator returning
+-- @'Maybe' a@ rather than @a@.  Every 'PartialMonoid' is a 'PartialSemigroup'.
+--
+-- == The identity axioms for partial monoids
+--
+-- For all @x@:
+--
+--  * @'pmempty' '<>?' x = x '<>?' 'pempty'@.
+--
+--  * @'pmempty' '<>?' x = 'Nothing'@ or @'pmempty' '<>?' x = 'Just' x@.
+--
+-- @since 0.7.0.0
+class PartialSemigroup a => PartialMonoid a where
+  -- | Identity of '<>?'.
+  pmempty :: a
+  pmempty = fromJust . pmconcat $ []
+  {-# INLINE pmempty #-}
+
+  -- | Fold a list using the monoid.
+  --
+  -- For most types, the default definition of 'pmconcat' will be used, but the
+  -- function is included in the class definition so that an optimized version
+  -- can be provided for specific types.
+  pmconcat :: [a] -> Maybe a
+  pmconcat = foldM pmappend pmempty
+  {-# INLINE pmconcat #-}
+
+  {-# MINIMAL pmempty | pmconcat #-}
+
+-- | An associative operation.
+--
+-- This is an alias for '<>?', for compatibility with 'mappend'.
+--
+-- @since 0.7.0.0
+pmappend :: PartialMonoid a => a -> a -> Maybe a
+pmappend = (<>?)
+{-# INLINE pmappend #-}
+
+--------------------------------------------------------------------------------
+
 instance PartialSemigroup () where
   () <>? () = Just ()
+
+-- | @since 0.7.0.0
+instance PartialMonoid () where
+  pmempty = ()
+  pmconcat _ = Just ()
 
 --------------------------------------------------------------------------------
 
 instance PartialSemigroup [a] where
   x <>? y = Just (x <> y)
 
+-- | @since 0.7.0.0
+instance PartialMonoid [a] where
+  pmempty = mempty
+  pmconcat = Just . mconcat
+
 --------------------------------------------------------------------------------
 
 instance Num a => PartialSemigroup (Sum a) where
   x <>? y = Just (x <> y)
 
+-- | @since 0.7.0.0
+instance Num a => PartialMonoid (Sum a) where
+  pmempty = mempty
+  pmconcat = Just . mconcat
+
 instance Num a => PartialSemigroup (Product a) where
   x <>? y = Just (x <> y)
+
+-- | @since 0.7.0.0
+instance Num a => PartialMonoid (Product a) where
+  pmempty = mempty
+  pmconcat = Just . mconcat
 
 --------------------------------------------------------------------------------
 
 instance PartialSemigroup a => PartialSemigroup (Identity a) where
   Identity x <>? Identity y = Identity <$> (x <>? y)
+
+-- | @since 0.7.0.0
+instance PartialMonoid a => PartialMonoid (Identity a) where
+  pmempty = Identity pmempty
+  pmconcat = pmconcat
 
 --------------------------------------------------------------------------------
 
@@ -168,6 +237,10 @@ instance (PartialSemigroup a, PartialSemigroup b) => PartialSemigroup (a, b) whe
       <$> (a <>? a')
       <*> (b <>? b')
 
+-- | @since 0.7.0.0
+instance (PartialMonoid a, PartialMonoid b) => PartialMonoid (a, b) where
+  pmempty = (pmempty, pmempty)
+
 instance
   (PartialSemigroup a, PartialSemigroup b, PartialSemigroup c) =>
   PartialSemigroup (a, b, c)
@@ -177,6 +250,13 @@ instance
       <$> (a <>? a')
       <*> (b <>? b')
       <*> (c <>? c')
+
+-- | @since 0.7.0.0
+instance
+  (PartialMonoid a, PartialMonoid b, PartialMonoid c) =>
+  PartialMonoid (a, b, c)
+  where
+  pmempty = (pmempty, pmempty, pmempty)
 
 --------------------------------------------------------------------------------
 
@@ -334,6 +414,10 @@ instance PartialSemigroup a => Semigroup (Partial a) where
   Partial (Just x) <> Partial (Just y) = Partial (x <>? y)
   _ <> _ = Partial Nothing
 
+-- | @since 0.7.0.0
+instance PartialMonoid a => Monoid (Partial a) where
+  mempty = Partial . Just $ pmempty
+
 --------------------------------------------------------------------------------
 
 -- $total
@@ -366,6 +450,10 @@ newtype Total a = Total {unTotal :: a}
 instance Semigroup a => PartialSemigroup (Total a) where
   Total x <>? Total y = Just (Total (x <> y))
 
+-- | @since 0.7.0.0
+instance Monoid a => PartialMonoid (Total a) where
+  pmempty = Total mempty
+
 --------------------------------------------------------------------------------
 
 -- | A wrapper for 'Either' where the 'PartialSemigroup' operator is defined
@@ -396,6 +484,10 @@ instance PartialSemigroup a => PartialSemigroup (AppendLeft a b) where
   AppendLeft (Left x) <>? AppendLeft (Left y) =
     AppendLeft . Left <$> (x <>? y)
   _ <>? _ = Nothing
+
+-- | @since 0.7.0.0
+instance PartialMonoid a => PartialMonoid (AppendLeft a b) where
+  pmempty = AppendLeft . Left $ pmempty
 
 --------------------------------------------------------------------------------
 
@@ -428,6 +520,10 @@ instance PartialSemigroup b => PartialSemigroup (AppendRight a b) where
     AppendRight . Right <$> (x <>? y)
   _ <>? _ = Nothing
 
+-- | @since 0.7.0.0
+instance PartialMonoid b => PartialMonoid (AppendRight a b) where
+  pmempty = AppendRight . Right $ pmempty
+
 --------------------------------------------------------------------------------
 
 -- $refusing
@@ -451,3 +547,7 @@ instance PartialSemigroup (AtMostOne a) where
   AtMostOne Nothing <>? x = Just x
   x <>? AtMostOne Nothing = Just x
   _ <>? _ = Nothing
+
+-- | @since 0.7.0.0
+instance PartialMonoid (AtMostOne a) where
+  pmempty = AtMostOne Nothing

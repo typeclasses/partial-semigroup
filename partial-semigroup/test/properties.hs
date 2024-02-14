@@ -16,7 +16,7 @@ import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 import System.Exit qualified as Exit
 import System.IO qualified as IO
-import Test.PartialSemigroup.Hedgehog (assoc)
+import Test.PartialSemigroup.Hedgehog (assoc, identity)
 
 main :: IO ()
 main = do
@@ -34,17 +34,33 @@ prop_unit_assoc :: Property
 prop_unit_assoc =
   assoc (Gen.constant ())
 
+prop_unit_identity :: Property
+prop_unit_identity =
+  identity (Gen.constant ())
+
 prop_identity_assoc :: Property
 prop_identity_assoc =
   assoc (Identity <$> genStr)
+
+prop_identity_identity :: Property
+prop_identity_identity =
+  identity (Identity <$> genStr)
 
 prop_list_assoc :: Property
 prop_list_assoc =
   assoc genStr
 
+prop_list_identity :: Property
+prop_list_identity =
+  identity genStr
+
 prop_list_total_assoc :: Property
 prop_list_total_assoc =
   assoc (Total <$> genStr)
+
+prop_list_total_identity :: Property
+prop_list_total_identity =
+  identity (Total <$> genStr)
 
 prop_zipList_assoc :: Property
 prop_zipList_assoc =
@@ -58,25 +74,46 @@ prop_tuple2_assoc :: Property
 prop_tuple2_assoc =
   assoc ((,) <$> genStr <*> genEither)
 
+prop_tuple2_identity :: Property
+prop_tuple2_identity =
+  identity ((,) <$> genStr <*> Gen.constant ())
+
 prop_tuple3_assoc :: Property
 prop_tuple3_assoc =
   assoc ((,,) <$> genStr <*> genEither <*> genSum)
+
+prop_tuple3_identity :: Property
+prop_tuple3_identity =
+  identity ((,,) <$> genStr <*> Gen.constant () <*> genSum)
 
 prop_appendLeft_assoc :: Property
 prop_appendLeft_assoc =
   assoc (AppendLeft <$> genEither)
 
+prop_appendLeft_identity :: Property
+prop_appendLeft_identity =
+  identity (AppendLeft <$> genEither)
+
 prop_appendRight_assoc :: Property
 prop_appendRight_assoc =
   assoc (AppendRight <$> genEither)
+
+prop_appendRight_identity :: Property
+prop_appendRight_identity =
+  identity (AppendRight <$> genEither)
 
 prop_one_assoc :: Property
 prop_one_assoc =
   assoc (One <$> genMaybe)
 
+
 prop_atMostOne_assoc :: Property
 prop_atMostOne_assoc =
   assoc (AtMostOne <$> genMaybe)
+
+prop_atMostOne_identity :: Property
+prop_atMostOne_identity =
+  identity (AtMostOne <$> genMaybe)
 
 --------------------------------------------------------------------------------
 --  Generators
