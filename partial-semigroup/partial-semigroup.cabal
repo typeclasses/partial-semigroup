@@ -37,7 +37,7 @@ common test
     default-extensions: TemplateHaskell
     build-depends:
       , partial-semigroup
-      , hedgehog ^>= 1.1.2 || ^>= 1.2
+      , hedgehog ^>= 1.1.2 || ^>= 1.2 || ^>= 1.3 || ^>= 1.4
 
 library
     import: base
